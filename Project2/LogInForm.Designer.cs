@@ -1,4 +1,4 @@
-﻿namespace Project2
+﻿namespace StorageHolder
 {
     partial class LogInForm
     {
@@ -38,25 +38,25 @@
             // 
             // LoginField
             // 
-            this.LoginField.Location = new System.Drawing.Point(190, 21);
+            this.LoginField.Location = new System.Drawing.Point(123, 12);
             this.LoginField.Name = "LoginField";
-            this.LoginField.Size = new System.Drawing.Size(158, 20);
+            this.LoginField.Size = new System.Drawing.Size(214, 20);
             this.LoginField.TabIndex = 0;
             this.LoginField.TextChanged += new System.EventHandler(this.CheckFields);
             // 
             // PasswordField
             // 
-            this.PasswordField.Location = new System.Drawing.Point(190, 47);
+            this.PasswordField.Location = new System.Drawing.Point(123, 38);
             this.PasswordField.Name = "PasswordField";
             this.PasswordField.PasswordChar = '*';
-            this.PasswordField.Size = new System.Drawing.Size(158, 20);
+            this.PasswordField.Size = new System.Drawing.Size(214, 20);
             this.PasswordField.TabIndex = 1;
             this.PasswordField.TextChanged += new System.EventHandler(this.CheckFields);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(23, 24);
+            this.label1.Location = new System.Drawing.Point(12, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(103, 13);
             this.label1.TabIndex = 2;
@@ -65,7 +65,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(23, 50);
+            this.label2.Location = new System.Drawing.Point(12, 41);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(45, 13);
             this.label2.TabIndex = 3;
@@ -74,7 +74,7 @@
             // LogInButton
             // 
             this.LogInButton.Enabled = false;
-            this.LogInButton.Location = new System.Drawing.Point(190, 73);
+            this.LogInButton.Location = new System.Drawing.Point(179, 64);
             this.LogInButton.Name = "LogInButton";
             this.LogInButton.Size = new System.Drawing.Size(158, 23);
             this.LogInButton.TabIndex = 4;
@@ -84,7 +84,7 @@
             // 
             // Registry
             // 
-            this.Registry.Location = new System.Drawing.Point(26, 73);
+            this.Registry.Location = new System.Drawing.Point(15, 64);
             this.Registry.Name = "Registry";
             this.Registry.Size = new System.Drawing.Size(158, 23);
             this.Registry.TabIndex = 5;
@@ -96,7 +96,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(380, 118);
+            this.ClientSize = new System.Drawing.Size(352, 97);
             this.Controls.Add(this.Registry);
             this.Controls.Add(this.LogInButton);
             this.Controls.Add(this.label2);
