@@ -143,7 +143,7 @@
             // 
             // DownloadFileContext
             // 
-            this.DownloadFileContext.Image = global::StorageHolder.Properties.Resources.download1;
+            this.DownloadFileContext.Image = global::StorageHolder.Properties.Resources.icons8_download_from_the_cloud_24;
             this.DownloadFileContext.Name = "DownloadFileContext";
             this.DownloadFileContext.Size = new System.Drawing.Size(188, 22);
             this.DownloadFileContext.Text = "Download";
@@ -152,7 +152,7 @@
             // 
             // DownloadFileAsContext
             // 
-            this.DownloadFileAsContext.Image = global::StorageHolder.Properties.Resources.download1;
+            this.DownloadFileAsContext.Image = global::StorageHolder.Properties.Resources.icons8_download_from_the_cloud_24;
             this.DownloadFileAsContext.Name = "DownloadFileAsContext";
             this.DownloadFileAsContext.Size = new System.Drawing.Size(188, 22);
             this.DownloadFileAsContext.Text = "Download as...";
@@ -169,7 +169,7 @@
             // 
             // GetSharedLinkClipboardContext
             // 
-            this.GetSharedLinkClipboardContext.Image = global::StorageHolder.Properties.Resources.copy;
+            this.GetSharedLinkClipboardContext.Image = global::StorageHolder.Properties.Resources.icons8_copy_24;
             this.GetSharedLinkClipboardContext.Name = "GetSharedLinkClipboardContext";
             this.GetSharedLinkClipboardContext.Size = new System.Drawing.Size(188, 22);
             this.GetSharedLinkClipboardContext.Text = "Copy link";
@@ -177,7 +177,7 @@
             // 
             // RenameContext
             // 
-            this.RenameContext.Image = global::StorageHolder.Properties.Resources.rename;
+            this.RenameContext.Image = global::StorageHolder.Properties.Resources.icons8_rename_24;
             this.RenameContext.Name = "RenameContext";
             this.RenameContext.Size = new System.Drawing.Size(188, 22);
             this.RenameContext.Text = "Rename";
@@ -185,7 +185,7 @@
             // 
             // DeleteContext
             // 
-            this.DeleteContext.Image = global::StorageHolder.Properties.Resources.trash;
+            this.DeleteContext.Image = global::StorageHolder.Properties.Resources.icons8_trash_24;
             this.DeleteContext.Name = "DeleteContext";
             this.DeleteContext.Size = new System.Drawing.Size(188, 22);
             this.DeleteContext.Text = "Delete";
@@ -194,7 +194,7 @@
             // 
             // NewFolderContext
             // 
-            this.NewFolderContext.Image = global::StorageHolder.Properties.Resources.new_folder;
+            this.NewFolderContext.Image = global::StorageHolder.Properties.Resources.icons8_documents_folder_24;
             this.NewFolderContext.Name = "NewFolderContext";
             this.NewFolderContext.Size = new System.Drawing.Size(188, 22);
             this.NewFolderContext.Text = "New folder";
@@ -202,7 +202,7 @@
             // 
             // InfoContext
             // 
-            this.InfoContext.Image = global::StorageHolder.Properties.Resources.info;
+            this.InfoContext.Image = global::StorageHolder.Properties.Resources.icons8_info_24;
             this.InfoContext.Name = "InfoContext";
             this.InfoContext.Size = new System.Drawing.Size(188, 22);
             this.InfoContext.Text = "Info";
@@ -306,7 +306,7 @@
             this.LogOutButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.LogOutButton.FlatAppearance.BorderSize = 0;
             this.LogOutButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.LogOutButton.Image = global::StorageHolder.Properties.Resources.logout;
+            this.LogOutButton.Image = global::StorageHolder.Properties.Resources.icons8_log_in_24;
             this.LogOutButton.Location = new System.Drawing.Point(664, 0);
             this.LogOutButton.Name = "LogOutButton";
             this.LogOutButton.Size = new System.Drawing.Size(33, 29);
@@ -319,7 +319,7 @@
             // UserLabel
             // 
             this.UserLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.UserLabel.Image = global::StorageHolder.Properties.Resources.user;
+            this.UserLabel.Image = global::StorageHolder.Properties.Resources.icons8_user_24;
             this.UserLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.UserLabel.Location = new System.Drawing.Point(529, 0);
             this.UserLabel.Name = "UserLabel";
@@ -335,7 +335,7 @@
             this.DownloadButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.DownloadButton.FlatAppearance.BorderSize = 0;
             this.DownloadButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.DownloadButton.Image = global::StorageHolder.Properties.Resources.download1;
+            this.DownloadButton.Image = global::StorageHolder.Properties.Resources.icons8_download_from_the_cloud_24;
             this.DownloadButton.Location = new System.Drawing.Point(876, 0);
             this.DownloadButton.Name = "DownloadButton";
             this.DownloadButton.Size = new System.Drawing.Size(33, 29);
@@ -399,7 +399,7 @@
             this.ExitButton.FlatAppearance.BorderSize = 0;
             this.ExitButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.ExitButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ExitButton.Image = global::StorageHolder.Properties.Resources.shutdown;
+            this.ExitButton.Image = global::StorageHolder.Properties.Resources.icons8_shutdown_24;
             this.ExitButton.Location = new System.Drawing.Point(975, 0);
             this.ExitButton.Name = "ExitButton";
             this.ExitButton.Size = new System.Drawing.Size(46, 29);
@@ -455,7 +455,7 @@
             this.NewFolderButton.FlatAppearance.BorderSize = 0;
             this.NewFolderButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.NewFolderButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.NewFolderButton.Image = global::StorageHolder.Properties.Resources.new_folder;
+            this.NewFolderButton.Image = global::StorageHolder.Properties.Resources.icons8_documents_folder_24;
             this.NewFolderButton.Location = new System.Drawing.Point(110, 0);
             this.NewFolderButton.Name = "NewFolderButton";
             this.NewFolderButton.Size = new System.Drawing.Size(38, 35);
@@ -485,7 +485,7 @@
             this.DeleteButton.FlatAppearance.BorderSize = 0;
             this.DeleteButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.DeleteButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.DeleteButton.Image = global::StorageHolder.Properties.Resources.trash;
+            this.DeleteButton.Image = global::StorageHolder.Properties.Resources.icons8_trash_24;
             this.DeleteButton.Location = new System.Drawing.Point(35, 0);
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new System.Drawing.Size(38, 35);
@@ -501,7 +501,7 @@
             this.UpButton.FlatAppearance.BorderSize = 0;
             this.UpButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.UpButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.UpButton.Image = global::StorageHolder.Properties.Resources.up;
+            this.UpButton.Image = global::StorageHolder.Properties.Resources.icons8_arrow_up_24;
             this.UpButton.Location = new System.Drawing.Point(0, 0);
             this.UpButton.Name = "UpButton";
             this.UpButton.Size = new System.Drawing.Size(38, 35);
