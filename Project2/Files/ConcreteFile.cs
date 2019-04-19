@@ -10,6 +10,9 @@ namespace StorageHolder
     {
         public string FileName { get; set; }
         public string FilePath { get; set; }
+        public float FileSize { get; set; }
+        public DateTime DateFileClientModified { get; set; }
+        public DateTime DateFileServerModified { get; set; }
         public FileTypes Type { get; set; }
         public string Id { get; set; }
         public int Icon { get; set; } = 0;

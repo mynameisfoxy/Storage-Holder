@@ -1,99 +1,74 @@
-﻿using Dropbox.Api;
-using StorageHolder.Files;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Dropbox;
-using Dropbox.Api.Files;
-using Dropbox.Api.Stone;
 using Syroot.Windows.IO;
+using System.Drawing;
 
 namespace StorageHolder
 {
+    //public static class Extensions
+    //{
+    //    public static string PathCombine(this string[] paths)
+    //    {
+    //        string result = string.Empty;
+    //        foreach (string path in paths)
+    //            result = Path.Combine(result, path);
+    //        return result;
+    //    }
+    //}
+
     public partial class WorkDirectioryForm : Form
     {
         List<AbstractFile> FilesAndFolders = new List<AbstractFile>();
+        List<AbstractFile> DownloadList = new List<AbstractFile>();
+        List<AbstractFile> DeleteList = new List<AbstractFile>();
+        List<AbstractFile> UploadList = new List<AbstractFile>();
         List<string> BreadCrumbs = new List<string>();
         string CurrentPath = null;
-        //string CurrentFile = null;
+        string FileSystemPath = @"D:\Downloads\";
         string DownloadPath = new KnownFolder(KnownFolderType.Downloads).Path;
+        IStorage DropboxClient;
+        Lists ActiveList = Lists.Storage;
+        Point moveStart;
+
         public WorkDirectioryForm()
         {
             InitializeComponent();
+            InitializeIcons();
+            SettingsPage.Parent = this;
+            StorageFolderPage.Parent = this;
+            UpButton.Parent = StorageFolderPage;
+            StorageFilesList.Parent = StorageFolderPage;
+            BreadCrumbsPanel.Parent = StorageFolderPage;
+            
+            StorageFolderPage.BringToFront();
             //====================================
             BreadCrumbs.Add("/");
-            listView1.SmallImageList = imageList1;
-            imageList1.Images.Add(Properties.Resources.file);
-            imageList1.Images.Add(Properties.Resources.folder);
-            imageList1.Images.Add(Properties.Resources.text);
-            imageList1.Images.Add(Properties.Resources.music);
-            imageList1.Images.Add(Properties.Resources.document);
-            imageList1.Images.Add(Properties.Resources.pdf);
-            imageList1.Images.Add(Properties.Resources.image);
-            imageList1.Images.Add(Properties.Resources.URL);
-            imageList1.Images.Add(Properties.Resources.archive);
+
             string[] files = Directory.GetFiles(Directory.GetCurrentDirectory());
-            //foreach (string file in files)
-            //{
-            //    ListViewItem lvi = new ListViewItem();
-            //    // установка названия файла
-            //    lvi.Text = file.Remove(0, file.LastIndexOf('\\') + 1);
-            //    lvi.ImageIndex = 0; // установка картинки для файла
-            //    // добавляем элемент в ListView
-            //    listView1.Items.Add(lvi);
-            //}
-            button1_Click(this, new EventArgs());
+
+            DropboxClient = new DropboxStorage("JPL_TOTIRMAAAAAAAAAAHFc9X2uPZtbmp3mIc62wzPEjCco1lj_XmpJHgu8hzawO");
+            RightComboBox.SelectedIndex = 0;
+
+            GoToRoot(this, new EventArgs());
+
         }
 
-        async Task ListRootFolder(DropboxClient dbx)
+        void InitializeIcons()
         {
-            var list = await dbx.Files.ListFolderAsync(string.Empty);
-            // show folders then files
-            foreach (var item in list.Entries.Where(i => i.IsFolder))
-            {
-                ListViewItem lvi = new ListViewItem();
-                //Console.WriteLine("D  {0}/", item.Name);
-                // установка названия файла
-                lvi.Text = item.Name;
-                lvi.ImageIndex = 0;
-                listView1.Items.Add(lvi);
-            }
-
-            foreach (var item in list.Entries.Where(i => i.IsFile))
-            {
-                ListViewItem lvi = new ListViewItem();
-
-                //try
-                //{
-                //    IDownloadResponse<FileMetadata> AsyncThumb = await dbx.Files.GetThumbnailAsync(item.PathLower, ThumbnailFormat.Jpeg.Instance, ThumbnailSize.W32h32.Instance);
-
-                //    //Metadata meta = await dbx.Files.GetMetadataAsync(item.PathLower);
-                //    //meta.ParentSharedFolderId;
-                //    //MessageBox.Show("111");
-                //    Image img = Image.FromStream(await AsyncThumb.GetContentAsStreamAsync());
-                //    imageList1.Images.Add(img);
-                //    //using (FileStream VarFileStream = File.Create(item.Name))
-                //    //{
-                //    //    Stream ThumbStream = await AsyncThumb.GetContentAsStreamAsync();
-                //    //    ThumbStream.CopyTo(VarFileStream);
-                //    //}
-                //}
-                //catch (ApiException<ThumbnailError>)
-                //{
-                    
-                //}
-                // установка названия файла
-                lvi.Text = item.Name;
-                lvi.ImageIndex = imageList1.Images.Count-1;
-                listView1.Items.Add(lvi);
-            }
+            imageList1.Images.Add(Properties.Resources.icons8_file_24);
+            imageList1.Images.Add(Properties.Resources.icons8_folder_24);
+            imageList1.Images.Add(Properties.Resources.icons8_document_24);
+            imageList1.Images.Add(Properties.Resources.icons8_musical_notes_24);
+            imageList1.Images.Add(Properties.Resources.icons8_document_24);
+            imageList1.Images.Add(Properties.Resources.icons8_pdf_24);
+            imageList1.Images.Add(Properties.Resources.icons8_image_file_24);
+            imageList1.Images.Add(Properties.Resources.icons8_bookmark_24);
+            imageList1.Images.Add(Properties.Resources.icons8_filing_cabinet_24);
         }
 
         void GenerateBreadCrumbs(string path)
@@ -102,17 +77,17 @@ namespace StorageHolder
             BreadCrumbs.Add("/");
             BreadCrumbsPanel.Items.Clear();
             BreadCrumbsPanel.Items.Add("/");
-            BreadCrumbsPanel.Items[0].Click += button1_Click;
+            BreadCrumbsPanel.Items[0].Click += GoToRoot;
             if (path != null)
             {
-                string[] outerstring = path.Split('/');
+                string[] SplittedParhString = path.Split('/');
                 
-                string teststring = "";
-                for (int i = 1; i < outerstring.Length; i++)
+                string BreadPathString = "";
+                for (int i = 1; i < SplittedParhString.Length; i++)
                 {
-                    teststring += "/"+outerstring[i];
-                    BreadCrumbs.Add(teststring);
-                    BreadCrumbsPanel.Items.Add(outerstring[i]);
+                    BreadPathString += "/"+ SplittedParhString[i];
+                    BreadCrumbs.Add(BreadPathString);
+                    BreadCrumbsPanel.Items.Add(SplittedParhString[i]);
                     BreadCrumbsPanel.Items[i].Click += async (object sender, EventArgs e) => {
                         ToolStripItem BreadClicked = sender as ToolStripItem;
                         CurrentPath = BreadCrumbs[BreadCrumbsPanel.Items.IndexOf(BreadClicked)];
@@ -121,220 +96,447 @@ namespace StorageHolder
                 }
             }
         }
-        
-        async Task ChainToShow(string path)
+
+        List<AbstractFile> GetFileSystemList(string FsPath)
         {
-            using (DropboxClient dbx = new DropboxClient("JPL_TOTIRMAAAAAAAAAAHFc9X2uPZtbmp3mIc62wzPEjCco1lj_XmpJHgu8hzawO"))
-            {
-                button1.Enabled = false;
-                progressBar1.Value = 30;
-                //await ListRootFolder(dbx);
-                FilesAndFolders = await GetList(path, dbx);
-                progressBar1.Value = 50;
-                DisplayContent(FilesAndFolders);
-                SetIcons(FilesAndFolders);
-                button1.Enabled = true;
-                button1.Text = "/";
-                GenerateBreadCrumbs(path);
-                progressBar1.Value = 70;
-                if (String.IsNullOrEmpty(CurrentPath))
-                {
-                    button2.Enabled = false;
-                }
-                else
-                {
-                    button2.Enabled = true;
-                }
-                progressBar1.Value = 100;
-                await Task.Run( async () => { await Task.Delay(1000); });
-                progressBar1.Value = 0;
-            }
-        }
-        
-        async Task<List<AbstractFile>> GetList(string path, DropboxClient client)
-        {
-            if (String.IsNullOrEmpty(path))
-            {
-                path = string.Empty;
-                //path = "/Изображения";
-            }
             List<AbstractFile> FilesList = new List<AbstractFile>();
-            ListFolderResult list = await client.Files.ListFolderAsync(path);
+            //FileSystemFilesAndFolders.Clear();
+            string[] files = Directory.GetFiles(FsPath);
+            string[] directory = Directory.GetDirectories(FsPath);
             int index = 0;
-            foreach (var item in list.Entries.Where(i => i.IsFolder))
+            if (!String.IsNullOrEmpty(FsPath) && FsPath.Length > 3)
             {
-                FilesList.Add(new CreateConcreteFolder().Create());
-                ConcreteFolder fle = (ConcreteFolder)FilesList[index];
-                //Metadata meta = await client.Files.GetMetadataAsync(item.PathLower);
-                fle.FolderName = item.Name;
-                fle.FolderPath = item.PathLower;
-                //fle.Id = item.AsFolder.Id;
-                FilesList[index] = fle;
-                index++;
+                FilesList.Add(new ConcreteFolder());
+                ConcreteFolder UpFolder = (ConcreteFolder)FilesList[0];
+                UpFolder.FolderName = "..";
+                UpFolder.FolderPath = FsPath.Remove(FsPath.LastIndexOf(@"\"), FsPath.Length - FsPath.LastIndexOf(@"\"));
+                FilesList[0] = UpFolder;
+                index = 1;
             }
-            foreach (var item in list.Entries.Where(i => i.IsFile))
+            foreach (string obj in directory)
             {
-                FilesList.Add(new CreateConcreteFile().Create());
-                ConcreteFile fle = (ConcreteFile)FilesList[index];
-                //Metadata meta = await client.Files.GetMetadataAsync(item.PathLower);
-                fle.FileName = item.Name;
-                fle.FilePath = item.PathLower;
-                fle.Type = FileTypes.File;
-                //fle.Id = meta.AsFile.Id;
-                FilesList[index] = fle;
-                index++;
+                if (Directory.Exists(obj))
+                {
+                    FilesList.Add(new ConcreteFolder());
+                    ConcreteFolder fld = (ConcreteFolder)FilesList[index];
+                    fld.FolderName = obj.Remove(0, obj.LastIndexOf('\\') + 1);
+                    fld.FolderPath = Path.GetFullPath(obj);
+                    FilesList[index] = fld;
+                    index++;
+                }
+            }
+            foreach (string obj in files)
+            {
+                if (File.Exists(obj))
+                {
+                    FilesList.Add(new ConcreteFile());
+                    ConcreteFile fle = (ConcreteFile)FilesList[index];
+                    fle.FileName = Path.GetFileName(obj);
+                    fle.FilePath = Path.GetFullPath(obj);
+                    fle.FileSize = new FileInfo(obj).Length / 1024;
+                    fle.Type = FileTypes.File;
+                    FilesList[index] = fle;
+                    index++;
+                }
             }
             index = 0;
             return FilesList;
         }
-
-        void DisplayContent(List<AbstractFile> list)
+        
+        async Task ChainToShow(string path) //переписать бы это дерьмо по-человечески
         {
-            listView1.Clear();
+            InfoContext.Visible = false;
+            DeleteContext.Visible = false;
+            DeleteButton.Enabled = false;
+            //==============================
+            progressBar1.Value = 30;
+            FilesAndFolders = await DropboxClient.GetList(path);
+            progressBar1.Value = 50;
+            DisplayContent(FilesAndFolders, StorageFilesList);
+            SetIcons(FilesAndFolders, StorageFilesList);
+            DisplayCounters(FilesAndFolders, StorageListCount);
+            GenerateBreadCrumbs(path);
+            progressBar1.Value = 70;
+            if (String.IsNullOrEmpty(CurrentPath))
+            {
+                UpButton.Enabled = false;
+            }
+            else
+            {
+                UpButton.Enabled = true;
+            }
+            progressBar1.Value = 100;
+            await Task.Run(async () => { await Task.Delay(1000); });
+            progressBar1.Value = 0;
+            
+            //FilesAndFolders = await DropboxClient.GetMetadata(FilesAndFolders);
+            //DisplayContent(FilesAndFolders, StorageFilesList);
+            //SetIcons(FilesAndFolders, StorageFilesList);
+        }
+
+        void DisplayCounters(List<AbstractFile> list, Label label)
+        {
+            int files = 0, folders = 0;
+            foreach (AbstractFile folder in list.Where(i => i.GetType() == "Folder"))
+            {
+                folders++;
+            }
+            foreach (AbstractFile file in list.Where(i => i.GetType() == "File"))
+            {
+                files++;
+            }
+            if (!String.IsNullOrEmpty(CurrentPath) && CurrentPath != "/")
+            {
+                folders--;
+            }
+            label.Text = files.ToString() + " files, and " + folders.ToString() + " folders";
+        }
+
+        void DisplayContent(List<AbstractFile> list, ListView FileList)
+        {
+            FileList.Clear();
+            FileList.Columns.Add("Name");
+            FileList.Columns[0].Width = 300;
+            FileList.Columns.Add("Size");
             foreach (var item in list.Where(i => i.GetType() == "Folder"))
             {
                 ListViewItem lvi = new ListViewItem();
                 ConcreteFolder fle = (ConcreteFolder)item;
                 lvi.Text = fle.FolderName;
-                //lvi.ImageIndex = 1;
-                listView1.Items.Add(lvi);
+                FileList.Items.Add(lvi);
             }
             foreach (var item in list.Where(i => i.GetType() == "File"))
             {
                 ListViewItem lvi = new ListViewItem();
                 ConcreteFile fle = (ConcreteFile)item;
                 lvi.Text = fle.FileName;
-                //lvi.ImageIndex = 0;
-                listView1.Items.Add(lvi);
+                lvi.SubItems.Add(fle.FileSize.ToString() + " Kb");
+                FileList.Items.Add(lvi);
             }
         }
 
-        void SetIcons(List<AbstractFile> list)
+        void SetIcons(List<AbstractFile> list, ListView FileList)
         {
             foreach (var item in list.Where(i => i.GetType() == "Folder"))
             {
                 int index = 0;
-                //MessageBox.Show("hello world");
                 ConcreteFolder fle = (ConcreteFolder)item;
-                listView1.Items[list.IndexOf(item)].ImageIndex = fle.Icon;
-                
+                FileList.Items[list.IndexOf(item)].ImageIndex = fle.Icon;
                 index++;
             }
             foreach (var item in list.Where(i => i.GetType() == "File"))
             {
                 int index = 0;
                 ConcreteFile fle = (ConcreteFile)item;
+                //Icon ico = Icon.ExtractAssociatedIcon(fle.FilePath);
                 switch (Path.GetExtension(fle.FilePath))
                 {
                     case ".url":
-                        listView1.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.URL;
+                        FileList.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.URL;
                         break;
                     case ".pdf":
-                        listView1.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.PDF;
+                        FileList.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.PDF;
                         break;
                     case ".jpg":
-                        listView1.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.Image;
+                        FileList.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.Image;
                         break;
                     case ".zip":
-                        listView1.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.Archive;
+                        FileList.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.Archive;
                         break;
                     default:
-                        listView1.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.File;
+                        FileList.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.File;
                         break;
                 }
                 index++;
             }
         }
 
-        private async void button1_Click(object sender, EventArgs e)
+        private async void GoToRoot(object sender, EventArgs e)
         {
             CurrentPath = null;
             await ChainToShow(null);
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            listView1.View = View.List;
-        }
-
-        async private void button2_Click(object sender, EventArgs e)
+        async private void UpButtonClick(object sender, EventArgs e)
         {
             CurrentPath = CurrentPath.Remove(CurrentPath.LastIndexOf("/"), CurrentPath.Length - CurrentPath.LastIndexOf("/"));
             await ChainToShow(CurrentPath);
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private async void StorageFileList_DoubleClick(object sender, EventArgs e)
         {
-            listView1.View = View.Tile;
-        }
-
-        private async void listView1_DoubleClick(object sender, EventArgs e)
-        {
-            if (listView1.SelectedIndices.Count > 0)
+            if (StorageFilesList.SelectedIndices.Count > 0)
             {
-                if (FilesAndFolders[listView1.SelectedIndices[0]].GetType() == "Folder")
+                if (FilesAndFolders[StorageFilesList.SelectedIndices[0]].GetType() == "Folder")
                 {
-                    ConcreteFolder concfldr = (ConcreteFolder)FilesAndFolders[listView1.SelectedIndices[0]];
+                    ConcreteFolder concfldr = (ConcreteFolder)FilesAndFolders[StorageFilesList.SelectedIndices[0]];
                     CurrentPath = concfldr.FolderPath;
                     await ChainToShow(CurrentPath);
                 }
             }
         }
 
-        async private void DownloadItem_Click(object sender, EventArgs e)
+        async void DownloadItem_Click(object sender, EventArgs e)
         {
-            if (FilesAndFolders[listView1.SelectedIndices[0]].GetType() == "File")
+            if (StorageFilesList.SelectedIndices.Count > 0)
             {
-                ConcreteFile concfle = (ConcreteFile)FilesAndFolders[listView1.SelectedIndices[0]];
-                await InitializeDownload(concfle.FilePath + "/" + concfle.FileName);
+                DownloadList.Clear();
+                foreach (int index in StorageFilesList.SelectedIndices)
+                {
+                    if (FilesAndFolders[index].GetType() == "File")
+                    {
+                        DownloadList.Add(FilesAndFolders[index]);
+                    }
+                }
+                await DropboxClient.InitializeDownload(this,DownloadPath, DownloadList);
             }
         }
 
         async private void DownloadItemAs_Click(object sender, EventArgs e)
         {
-            
-            if (FilesAndFolders[listView1.SelectedIndices[0]].GetType() == "File")
+            if (StorageFilesList.SelectedIndices.Count > 0)
             {
-                SaveFileDialog SaveFile = new SaveFileDialog();
-                ConcreteFile FileInTheListToDownload = (ConcreteFile)FilesAndFolders[listView1.SelectedIndices[0]];
-                SaveFile.FileName = FileInTheListToDownload.FileName;
-                DialogResult res = SaveFile.ShowDialog();
-                if (res == DialogResult.OK)
+                DownloadList.Clear();
+                foreach (int index in StorageFilesList.SelectedIndices)
                 {
-                    await InitializeDownload(SaveFile.FileName);
+                    if (FilesAndFolders[index].GetType() == "File")
+                    {
+                        DownloadList.Add(FilesAndFolders[index]);
+                    }
+                }
+                if (StorageFilesList.SelectedIndices.Count < 2)
+                {
+                    SaveFileDialog SaveFile = new SaveFileDialog();
+                    ConcreteFile FileInTheListToDownload = (ConcreteFile)FilesAndFolders[StorageFilesList.SelectedIndices[0]];
+                    SaveFile.FileName = FileInTheListToDownload.FileName;
+                    DialogResult res = SaveFile.ShowDialog();
+                    if (res == DialogResult.OK)
+                    {
+                        await DropboxClient.InitializeDownload(this, SaveFile.FileName, DownloadList);
+                    }
+                }
+                else
+                {
+                    FolderBrowserDialog SaveFileFolder = new FolderBrowserDialog();
+                    ConcreteFile FileInTheListToDownload = (ConcreteFile)FilesAndFolders[StorageFilesList.SelectedIndices[0]];
+                    DialogResult res = SaveFileFolder.ShowDialog();
+                    if (res == DialogResult.OK)
+                    {
+                        await DropboxClient.InitializeDownload(this, SaveFileFolder.SelectedPath, DownloadList);
+                    }
                 }
             }
         }
 
-        async Task InitializeDownload(string Current)
+        private void StorageFileList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ConcreteFile concfle = (ConcreteFile)FilesAndFolders[listView1.SelectedIndices[0]];
-            
-            using (DropboxClient dbx = new DropboxClient("JPL_TOTIRMAAAAAAAAAAHFc9X2uPZtbmp3mIc62wzPEjCco1lj_XmpJHgu8hzawO"))
+            if (StorageFilesList.SelectedIndices.Count > 0)
             {
-                using (FileStream fstream = new FileStream(Current, FileMode.CreateNew))
+                if (StorageFilesList.SelectedIndices.Count < 2)
                 {
-                    IDownloadResponse<FileMetadata> GetFile = await dbx.Files.DownloadAsync(concfle.FilePath);
-                    byte[] FileAsBytes = await GetFile.GetContentAsByteArrayAsync();
-                    await fstream.WriteAsync(FileAsBytes, 0, FileAsBytes.Length);
+                    InfoContext.Visible = true;
                 }
-            }
-        }
+                else
+                {
+                    InfoContext.Visible = false;
+                }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (listView1.SelectedIndices.Count > 0)
-            {
-                if (FilesAndFolders[listView1.SelectedIndices[0]].GetType() == "File")
+                if (FilesAndFolders[StorageFilesList.SelectedIndices[0]].GetType() == "File")
                 {
                     DownloadFileContext.Visible = true;
                     DownloadFileAsContext.Visible = true;
+                    DeleteContext.Visible = true;
+                    DeleteButton.Enabled = true;
                 }
                 else
                 {
                     DownloadFileContext.Visible = false;
                     DownloadFileAsContext.Visible = false;
+                    DeleteContext.Visible = true;
+                    DeleteButton.Enabled = true;
                 }
+            }
+            else
+            {
+                DownloadFileContext.Visible = false;
+                DownloadFileAsContext.Visible = false;
+                DeleteContext.Visible = false;
+                DeleteButton.Enabled = false;
+                InfoContext.Visible = false;
+            }
+        }
+
+        async private void CopyButton_Click(object sender, EventArgs e)
+        {
+            if (ActiveList == Lists.Storage)
+            {
+                if (StorageFilesList.SelectedIndices.Count > 0)
+                {
+                    DownloadList.Clear();
+                    foreach (int index in StorageFilesList.SelectedIndices)
+                    {
+                        if (FilesAndFolders[index].GetType() == "File")
+                        {
+                            DownloadList.Add(FilesAndFolders[index]);
+                        }
+                    }
+                    await DropboxClient.InitializeDownload(this, FileSystemPath, DownloadList);
+                }
+            }
+        }
+
+        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                moveStart = new Point(e.X, e.Y);
+            }
+        }
+
+        private void panel1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if ((e.Button & MouseButtons.Left) != 0)
+            {
+                // получаем новую точку положения формы
+                Point deltaPos = new Point(e.X - moveStart.X, e.Y - moveStart.Y);
+                // устанавливаем положение формы
+                this.Location = new Point(this.Location.X + deltaPos.X,
+                  this.Location.Y + deltaPos.Y);
+            }
+        }
+
+        private void ExitButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void SettingsButton_Click(object sender, EventArgs e)
+        {
+            LeftPanel.Visible = false;
+            SettingsPage.BringToFront();
+        }
+
+        private void StorageFilesList_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, false) == true)
+            {
+                e.Effect = DragDropEffects.All;
+            }
+        }
+
+        private async void StorageFilesList_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            UploadList.Clear();
+
+            foreach (string file in files)
+            {
+                ConcreteFile concfile = new ConcreteFile
+                {
+                    FilePath = Path.GetFullPath(file),
+                    FileName = Path.GetFileName(file)
+                };
+                UploadList.Add(concfile);
+            }
+            await DropboxClient.InitializeUpload(this, UploadList, CurrentPath);
+            await ChainToShow(CurrentPath);
+        }
+
+        private async void DeleteClicked(object sender, EventArgs e)
+        {
+            string countFiles;
+            int count = 0;
+            if (DeleteList.Count > 1)
+            {
+                countFiles = " items";
+            }
+            else
+            {
+                countFiles = " item";
+            }
+            if (StorageFilesList.SelectedIndices.Count > 0)
+            {
+                DeleteList.Clear();
+                foreach (int index in StorageFilesList.SelectedIndices)
+                {
+                    DeleteList.Add(FilesAndFolders[index]);
+                }
+                count = DeleteList.Count;
+                if (MessageBox.Show("Delete " + count + countFiles + "?", "Delete confirm", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                {
+                    await DropboxClient.InitializeDelete(this, DeleteList);
+                    await ChainToShow(CurrentPath);
+                }
+            }
+        }
+
+        private async void RefreshClick(object sender, EventArgs e)
+        {
+            await ChainToShow(CurrentPath);
+        }
+
+        private async void NewFolderClick(object sender, EventArgs e)
+        {
+            await DropboxClient.CreateFolder(CurrentPath);
+            await ChainToShow(CurrentPath);
+        }
+
+        private void InfoContext_Click(object sender, EventArgs e)
+        {
+            if (StorageFilesList.SelectedIndices.Count > 0 && StorageFilesList.SelectedIndices.Count < 2)
+            {
+                if (FilesAndFolders[StorageFilesList.SelectedIndices[0]].GetType() == "File")
+                {
+                    ConcreteFile file = (ConcreteFile)FilesAndFolders[StorageFilesList.SelectedIndices[0]];
+                    DropboxClient.ShowMetadata(file.FilePath);
+                }
+                if (FilesAndFolders[StorageFilesList.SelectedIndices[0]].GetType() == "Folder")
+                {
+                    ConcreteFolder folder = (ConcreteFolder)FilesAndFolders[StorageFilesList.SelectedIndices[0]];
+                    DropboxClient.ShowMetadata(folder.FolderPath);
+                }
+            }
+        }
+
+        private async void GetSharedLinkClipboardContext_Click(object sender, EventArgs e)
+        {
+            if (StorageFilesList.SelectedIndices.Count > 0 && StorageFilesList.SelectedIndices.Count < 2)
+            {
+                if (FilesAndFolders[StorageFilesList.SelectedIndices[0]].GetType() == "File")
+                {
+                    ConcreteFile file = (ConcreteFile)FilesAndFolders[StorageFilesList.SelectedIndices[0]];
+                    string str = await DropboxClient.GetSharedLink(file.FilePath);
+                }
+            }
+        }
+
+        private void StoragePageButton_Click(object sender, EventArgs e)
+        {
+            LeftPanel.Visible = true;
+            StorageFolderPage.BringToFront();
+        }
+
+        private void LogOutButton_Click(object sender, EventArgs e)
+        {
+            LeftPanel.Visible = false;
+            LoginPanel.BringToFront();
+        }
+
+        private async void RenameContext_Click(object sender, EventArgs e)
+        {
+            if (StorageFilesList.SelectedIndices.Count > 0 && StorageFilesList.SelectedIndices.Count < 2)
+            {
+                if (FilesAndFolders[StorageFilesList.SelectedIndices[0]].GetType() == "File")
+                {
+                    ConcreteFile file = (ConcreteFile)FilesAndFolders[StorageFilesList.SelectedIndices[0]];
+                    await DropboxClient.Rename(CurrentPath, file);
+                }
+                if (FilesAndFolders[StorageFilesList.SelectedIndices[0]].GetType() == "Folder")
+                {
+                    ConcreteFolder folder = (ConcreteFolder)FilesAndFolders[StorageFilesList.SelectedIndices[0]];
+                    await DropboxClient.Rename(CurrentPath, folder);
+                }
+                await ChainToShow(CurrentPath);
             }
         }
     }

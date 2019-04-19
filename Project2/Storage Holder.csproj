@@ -53,6 +53,9 @@
     <Reference Include="Dropbox.Api, Version=4.0.0.0, Culture=neutral, PublicKeyToken=310f0e82fbb45d01, processorArchitecture=MSIL">
       <HintPath>..\packages\Dropbox.Api.4.9.3\lib\net45\Dropbox.Api.dll</HintPath>
     </Reference>
+    <Reference Include="LollipoUi">
+      <HintPath>..\..\..\..\Desktop\LollipoUi.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -76,6 +79,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -87,6 +91,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Misc\CopyProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Misc\CopyProgress.Designer.cs">
+      <DependentUpon>CopyProgress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Misc\ItemInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Misc\ItemInfoForm.Designer.cs">
+      <DependentUpon>ItemInfoForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Misc\NewFolderForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Misc\NewFolderForm.Designer.cs">
+      <DependentUpon>NewFolderForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Storages\DropboxStorage.cs" />
     <Compile Include="Files\AbstractFile.cs" />
     <Compile Include="AddStorageForm.cs">
       <SubType>Form</SubType>
@@ -101,9 +129,6 @@
       <DependentUpon>CodeConfirmForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Files\ConcreteFolder.cs" />
-    <Compile Include="Files\CreateConcreteFile.cs" />
-    <Compile Include="Files\CreateConcreteFolder.cs" />
-    <Compile Include="Files\FileCreator.cs" />
     <Compile Include="Files\FileIcon.cs" />
     <Compile Include="Files\ConcreteFile.cs" />
     <Compile Include="Misc\HashFunc.cs" />
@@ -138,16 +163,20 @@
     <EmbeddedResource Include="LogInForm.resx">
       <DependentUpon>LogInForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Misc\CopyProgress.resx">
+      <DependentUpon>CopyProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Misc\ItemInfoForm.resx">
+      <DependentUpon>ItemInfoForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Misc\NewFolderForm.resx">
+      <DependentUpon>NewFolderForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="RegForm.resx">
       <DependentUpon>RegForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -180,10 +209,91 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
+    <None Include="bin\Debug\x86\file.ico" />
+    <None Include="bin\Debug\x86\openedfolder.ico" />
+    <None Include="bin\Debug\x86\folder.ico" />
+    <None Include="bin\Debug\x86\ai.ico" />
+    <None Include="bin\Debug\x86\app.ico" />
+    <None Include="bin\Debug\x86\asp.ico" />
+    <None Include="bin\Debug\x86\avi.ico" />
+    <None Include="bin\Debug\x86\bmp.ico" />
+    <None Include="bin\Debug\x86\book.ico" />
+    <None Include="bin\Debug\x86\cpp.ico" />
+    <None Include="bin\Debug\x86\css.ico" />
+    <None Include="bin\Debug\x86\dat.ico" />
+    <None Include="bin\Debug\x86\doc.ico" />
+    <None Include="bin\Debug\x86\docx.ico" />
+    <None Include="bin\Debug\x86\dotx.ico" />
+    <None Include="bin\Debug\x86\dxf.ico" />
+    <None Include="bin\Debug\x86\eps.ico" />
+    <None Include="bin\Debug\x86\exe.ico" />
+    <None Include="bin\Debug\x86\flv.ico" />
+    <None Include="bin\Debug\x86\gif.ico" />
+    <None Include="bin\Debug\x86\gwg.ico" />
+    <None Include="bin\Debug\x86\h.ico" />
+    <None Include="bin\Debug\x86\iso.ico" />
+    <None Include="bin\Debug\x86\java.ico" />
+    <None Include="bin\Debug\x86\jpg.ico" />
+    <None Include="bin\Debug\x86\keyfile.ico" />
+    <None Include="bin\Debug\x86\mov.ico" />
+    <None Include="bin\Debug\x86\mp3.ico" />
+    <None Include="bin\Debug\x86\mp4.ico" />
+    <None Include="bin\Debug\x86\mpg.ico" />
+    <None Include="bin\Debug\x86\musicfile.ico" />
+    <None Include="bin\Debug\x86\newfolder.ico" />
+    <None Include="bin\Debug\x86\num.ico" />
+    <None Include="bin\Debug\x86\odp.ico" />
+    <None Include="bin\Debug\x86\odt.ico" />
+    <None Include="bin\Debug\x86\ott.ico" />
+    <None Include="bin\Debug\x86\php.ico" />
+    <None Include="bin\Debug\x86\png.ico" />
+    <None Include="bin\Debug\x86\pps.ico" />
+    <None Include="bin\Debug\x86\ppt.ico" />
+    <None Include="bin\Debug\x86\psd.ico" />
+    <None Include="bin\Debug\x86\rar.ico" />
+    <None Include="bin\Debug\x86\rtf.ico" />
+    <None Include="bin\Debug\x86\textfile.ico" />
+    <None Include="bin\Debug\x86\tiff.ico" />
+    <None Include="bin\Debug\x86\videofile.ico" />
+    <None Include="bin\Debug\x86\wav.ico" />
+    <None Include="bin\Debug\x86\xls.ico" />
+    <None Include="bin\Debug\x86\xlsx.ico" />
+    <None Include="bin\Debug\x86\xml.ico" />
+    <None Include="bin\Debug\x86\zip.ico" />
+    <None Include="bin\Debug\x86\archive.ico" />
+    <None Include="bin\Debug\x86\document.ico" />
+    <None Include="bin\Debug\x86\icons8-image-file-24.png" />
+    <None Include="bin\Debug\x86\icons8-document-24.png" />
+    <None Include="bin\Debug\x86\icons8-file-24.png" />
+    <None Include="bin\Debug\x86\icons8-folder-24.png" />
+    <None Include="bin\Debug\x86\icons8-opened-folder-24.png" />
+    <None Include="bin\Debug\x86\icons8-picture-24.png" />
+    <None Include="bin\Debug\x86\icons8-pdf-24.png" />
+    <None Include="bin\Debug\x86\icons8-bookmark-24.png" />
+    <None Include="bin\Debug\x86\icons8-filing-cabinet-24.png" />
+    <None Include="bin\Debug\x86\icons8-hdd-24.png" />
+    <None Include="bin\Debug\x86\icons8-read-24.png" />
+    <None Include="bin\Debug\x86\icons8-shared-folder-24.png" />
+    <None Include="bin\Debug\x86\icons8-ssd-24.png" />
+    <None Include="bin\Debug\x86\icons8-musical-notes-24.png" />
+    <None Include="bin\Debug\x86\icons8-checkmark-24.png" />
+    <None Include="bin\Debug\x86\icons8-delete-24.png" />
+    <None Include="bin\Debug\x86\icons8-restart-24.png" />
+    <None Include="bin\Debug\x86\icons8-settings-24.png" />
+    <None Include="bin\Debug\x86\icons8-download-from-the-cloud-24.png" />
+    <None Include="bin\Debug\x86\icons8-trash-24.png" />
+    <None Include="bin\Debug\x86\icons8-documents-folder-24.png" />
+    <None Include="bin\Debug\x86\icons8-arrow-up-24.png" />
+    <None Include="bin\Debug\x86\icons8-shutdown-24.png" />
+    <None Include="bin\Debug\x86\icons8-export-24.png" />
+    <None Include="bin\Debug\x86\icons8-user-24.png" />
+    <None Include="bin\Debug\x86\icons8-info-24.png" />
+    <None Include="bin\Debug\x86\icons8-copy-24.png" />
+    <None Include="bin\Debug\x86\icons8-rename-24.png" />
     <Content Include="Resources\1200px-Googledrive_logo.svg.png" />
     <Content Include="Resources\file-png-12.png" />
+    <None Include="Resources\foldericon.ico" />
     <Content Include="Resources\twitter-card-glyph_m1%402x.png" />
     <Content Include="Resources\w256h2561339870311Folder256.png" />
     <Content Include="Resources\w450h4001385925290Document.png" />

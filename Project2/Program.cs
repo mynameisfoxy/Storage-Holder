@@ -19,6 +19,12 @@ namespace StorageHolder
         Archive = 8
     }
 
+    enum Lists
+    {
+        Storage = 0,
+        FileSystem =1
+    }
+
     static class Program
     {
         /// <summary>
