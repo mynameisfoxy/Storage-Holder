@@ -97,6 +97,8 @@
     <Compile Include="Misc\CopyProgress.Designer.cs">
       <DependentUpon>CopyProgress.cs</DependentUpon>
     </Compile>
+    <Compile Include="Misc\IconHelper.cs" />
+    <Compile Include="Misc\IconListManager.cs" />
     <Compile Include="Misc\ItemInfoForm.cs">
       <SubType>Form</SubType>
     </Compile>

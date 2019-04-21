@@ -104,7 +104,10 @@
             this.StorageFilesList.ContextMenuStrip = this.SelectedFilesContextMenu;
             this.StorageFilesList.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.StorageFilesList.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.StorageFilesList.FullRowSelect = true;
             this.StorageFilesList.GridLines = true;
+            this.StorageFilesList.HideSelection = false;
+            this.StorageFilesList.LabelWrap = false;
             this.StorageFilesList.LargeImageList = this.imageList1;
             this.StorageFilesList.Location = new System.Drawing.Point(0, 39);
             this.StorageFilesList.Name = "StorageFilesList";
@@ -181,6 +184,7 @@
             this.RenameContext.Name = "RenameContext";
             this.RenameContext.Size = new System.Drawing.Size(188, 22);
             this.RenameContext.Text = "Rename";
+            this.RenameContext.Visible = false;
             this.RenameContext.Click += new System.EventHandler(this.RenameContext_Click);
             // 
             // DeleteContext
@@ -296,8 +300,8 @@
             this.TopPanel.Name = "TopPanel";
             this.TopPanel.Size = new System.Drawing.Size(1021, 29);
             this.TopPanel.TabIndex = 8;
-            this.TopPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseDown);
-            this.TopPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseMove);
+            this.TopPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TopPanel_MouseDown);
+            this.TopPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.TopPanel_MouseMove);
             // 
             // LogOutButton
             // 

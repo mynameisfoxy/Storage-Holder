@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Syroot.Windows.IO;
 using System.Drawing;
+using Etier.IconHelper;
 
 namespace StorageHolder
 {
@@ -38,7 +39,7 @@ namespace StorageHolder
         public WorkDirectioryForm()
         {
             InitializeComponent();
-            InitializeIcons();
+            //InitializeIcons();
             SettingsPage.Parent = this;
             StorageFolderPage.Parent = this;
             UpButton.Parent = StorageFolderPage;
@@ -148,6 +149,8 @@ namespace StorageHolder
             InfoContext.Visible = false;
             DeleteContext.Visible = false;
             DeleteButton.Enabled = false;
+            RenameContext.Visible = false;
+            GetSharedLinkClipboardContext.Visible = false;
             //==============================
             progressBar1.Value = 30;
             FilesAndFolders = await DropboxClient.GetList(path);
@@ -217,37 +220,24 @@ namespace StorageHolder
 
         void SetIcons(List<AbstractFile> list, ListView FileList)
         {
+            imageList1.Images.Clear();
+            imageList1.Images.Add(Etier.IconHelper.IconReader.GetFolderIcon(IconReader.IconSize.Small,IconReader.FolderType.Closed));
             foreach (var item in list.Where(i => i.GetType() == "Folder"))
             {
-                int index = 0;
                 ConcreteFolder fle = (ConcreteFolder)item;
-                FileList.Items[list.IndexOf(item)].ImageIndex = fle.Icon;
-                index++;
+                FileList.Items[list.IndexOf(item)].ImageIndex = imageList1.Images.Count-1;
+            }
+            imageList1.Images.Add(Etier.IconHelper.IconReader.GetFolderIcon(IconReader.IconSize.Small, IconReader.FolderType.Open));
+            if (FileList.Items[0].Name == "..")
+            {
+                FileList.Items[0].ImageIndex = 1;
             }
             foreach (var item in list.Where(i => i.GetType() == "File"))
             {
-                int index = 0;
-                ConcreteFile fle = (ConcreteFile)item;
-                //Icon ico = Icon.ExtractAssociatedIcon(fle.FilePath);
-                switch (Path.GetExtension(fle.FilePath))
-                {
-                    case ".url":
-                        FileList.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.URL;
-                        break;
-                    case ".pdf":
-                        FileList.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.PDF;
-                        break;
-                    case ".jpg":
-                        FileList.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.Image;
-                        break;
-                    case ".zip":
-                        FileList.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.Archive;
-                        break;
-                    default:
-                        FileList.Items[list.IndexOf(item)].ImageIndex = (int)FileTypes.File;
-                        break;
-                }
-                index++;
+                ConcreteFile file = (ConcreteFile)item;
+                imageList1.Images.Add(Etier.IconHelper.IconReader.GetFileIcon(Path.GetExtension(file.FilePath), 
+                    IconReader.IconSize.Large, false));
+                FileList.Items[list.IndexOf(item)].ImageIndex = imageList1.Images.Count - 1;
             }
         }
 
@@ -335,10 +325,14 @@ namespace StorageHolder
                 if (StorageFilesList.SelectedIndices.Count < 2)
                 {
                     InfoContext.Visible = true;
+                    RenameContext.Visible = true;
+                    GetSharedLinkClipboardContext.Visible = true;
                 }
                 else
                 {
                     InfoContext.Visible = false;
+                    RenameContext.Visible = false;
+                    GetSharedLinkClipboardContext.Visible = false;
                 }
 
                 if (FilesAndFolders[StorageFilesList.SelectedIndices[0]].GetType() == "File")
@@ -363,6 +357,8 @@ namespace StorageHolder
                 DeleteContext.Visible = false;
                 DeleteButton.Enabled = false;
                 InfoContext.Visible = false;
+                RenameContext.Visible = false;
+                GetSharedLinkClipboardContext.Visible = false;
             }
         }
 
@@ -385,7 +381,7 @@ namespace StorageHolder
             }
         }
 
-        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        private void TopPanel_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
@@ -393,7 +389,7 @@ namespace StorageHolder
             }
         }
 
-        private void panel1_MouseMove(object sender, MouseEventArgs e)
+        private void TopPanel_MouseMove(object sender, MouseEventArgs e)
         {
             if ((e.Button & MouseButtons.Left) != 0)
             {
