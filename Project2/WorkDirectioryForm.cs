@@ -42,7 +42,7 @@ namespace StorageHolder
 
             string[] files = Directory.GetFiles(Directory.GetCurrentDirectory());
 
-            DropboxClient = new DropboxStorage("JPL_TOTIRMAAAAAAAAAAHFc9X2uPZtbmp3mIc62wzPEjCco1lj_XmpJHgu8hzawO");
+            DropboxClient = new DropboxStorage("");
             RightComboBox.SelectedIndex = 0;
 
             GoToRoot(this, new EventArgs());
