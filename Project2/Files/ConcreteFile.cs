@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StorageHolder
+namespace StorageHolder.Files
 {
     class ConcreteFile : AbstractFile
     {
@@ -13,9 +13,6 @@ namespace StorageHolder
         public float FileSize { get; set; }
         public DateTime DateFileClientModified { get; set; }
         public DateTime DateFileServerModified { get; set; }
-        public FileTypes Type { get; set; }
-        public string Id { get; set; }
-        public int Icon { get; set; } = 0;
-        public override string GetType() { return "File"; }
+        public override FileDir Type() { return FileDir.File; }
     }
 }

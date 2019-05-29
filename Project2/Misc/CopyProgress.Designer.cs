@@ -70,6 +70,7 @@
             this.OkButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.OkButton.BGColor = "#508ef5";
             this.OkButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.OkButton.Enabled = false;
             this.OkButton.FontColor = "#ffffff";
             this.OkButton.Location = new System.Drawing.Point(415, 37);
             this.OkButton.Name = "OkButton";

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.FolderNameBox = new System.Windows.Forms.TextBox();
-            this.CancelButton = new System.Windows.Forms.Button();
+            this.CncButton = new System.Windows.Forms.Button();
             this.OkButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.SuspendLayout();
@@ -43,19 +43,19 @@
             this.FolderNameBox.TabIndex = 0;
             this.FolderNameBox.TextChanged += new System.EventHandler(this.FolderNameBox_TextChanged);
             // 
-            // CancelButton
+            // CncButton
             // 
-            this.CancelButton.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.CancelButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelButton.FlatAppearance.BorderSize = 0;
-            this.CancelButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.CancelButton.Image = global::StorageHolder.Properties.Resources.icons8_delete_24;
-            this.CancelButton.Location = new System.Drawing.Point(341, 21);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(30, 30);
-            this.CancelButton.TabIndex = 2;
-            this.CancelButton.UseVisualStyleBackColor = false;
+            this.CncButton.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.CncButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.CncButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.CncButton.FlatAppearance.BorderSize = 0;
+            this.CncButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CncButton.Image = global::StorageHolder.Properties.Resources.icons8_delete_24;
+            this.CncButton.Location = new System.Drawing.Point(341, 21);
+            this.CncButton.Name = "CncButton";
+            this.CncButton.Size = new System.Drawing.Size(30, 30);
+            this.CncButton.TabIndex = 2;
+            this.CncButton.UseVisualStyleBackColor = false;
             // 
             // OkButton
             // 
@@ -90,7 +90,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(385, 58);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.CancelButton);
+            this.Controls.Add(this.CncButton);
             this.Controls.Add(this.OkButton);
             this.Controls.Add(this.FolderNameBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -108,7 +108,7 @@
 
         private System.Windows.Forms.TextBox FolderNameBox;
         private System.Windows.Forms.Button OkButton;
-        private System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.Button CncButton;
         private System.Windows.Forms.Panel panel1;
     }
 }

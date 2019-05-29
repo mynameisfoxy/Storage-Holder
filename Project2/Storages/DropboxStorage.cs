@@ -2,15 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using Dropbox.Api.Files;
-using Syroot.Windows.IO;
 using Dropbox.Api.Stone;
 using StorageHolder.Misc;
 using Dropbox.Api.Sharing;
+using StorageHolder.Files;
 
 namespace StorageHolder
 {
@@ -31,6 +30,7 @@ namespace StorageHolder
     class DropboxStorage : IStorage
     {
         DropboxClient client;
+        FileCreator Creator = new FileCreator();
 
         public DropboxStorage(string ClientToken)
         {
@@ -42,7 +42,7 @@ namespace StorageHolder
         {
             using (NewFolderForm CrtFldrFrm = new NewFolderForm())
             {
-                if (file.GetType() == "File")
+                if (file.Type() == FileDir.File)
                 {
                     ConcreteFile CurrentFile = (ConcreteFile)file;
                     CrtFldrFrm.SetItemName(CurrentFile.FileName);
@@ -52,7 +52,7 @@ namespace StorageHolder
                         await client.Files.MoveAsync(new RelocationArg(CurrentFile.FilePath, path + "/" + CrtFldrFrm.FolderName));
                     }
                 }
-                if (file.GetType() == "Folder")
+                if (file.Type() == FileDir.Folder)
                 {
                     ConcreteFolder CurrentFile = (ConcreteFolder)file;
                     CrtFldrFrm.SetItemName(CurrentFile.FolderName);
@@ -80,10 +80,17 @@ namespace StorageHolder
         public async Task<string> GetSharedLink(string path)
         {
             string Result = string.Empty;
-            await client.Sharing.RevokeSharedLinkAsync(path);
-            IDownloadResponse<SharedLinkMetadata> sharing = await client.Sharing.GetSharedLinkFileAsync(path);
-            MessageBox.Show(sharing.ToString());
-
+            try
+            {
+                SharedLinkMetadata sharedMeta = await client.Sharing.CreateSharedLinkWithSettingsAsync(path);
+                Result = sharedMeta.Url;
+            }
+            catch (ApiException<Dropbox.Api.Sharing.CreateSharedLinkWithSettingsError>)
+            {
+                ListSharedLinksResult sharedList = await client.Sharing.ListSharedLinksAsync(path: path);
+                IList<SharedLinkMetadata> asdasd = sharedList.Links;
+                Result = asdasd[asdasd.Count - 1].Url;
+            }
             return Result;
         }
 
@@ -95,14 +102,14 @@ namespace StorageHolder
             window.Show();
             foreach (AbstractFile file in DeleteList)
             {
-                if (file.GetType() == "File")
+                if (file.Type() == FileDir.File)
                 {
                     ConcreteFile FileToDelete = (ConcreteFile)file;
                     await client.Files.DeleteAsync(new DeleteArg(FileToDelete.FilePath));
                     enumerator++;
                     window.RefreshData(enumerator, count);
                 }
-                if (file.GetType() == "Folder")
+                if (file.Type() == FileDir.Folder)
                 {
                     ConcreteFolder FolderToDelete = (ConcreteFolder)file;
                     await client.Files.DeleteAsync(new DeleteArg(FolderToDelete.FolderPath));
@@ -110,6 +117,7 @@ namespace StorageHolder
                     window.RefreshData(enumerator, count);
                 }
             }
+            window.Close();
         }
 
         public async Task InitializeUpload (Form OwnerForm, List<AbstractFile> UploadList, string path)
@@ -122,27 +130,33 @@ namespace StorageHolder
             {
                 using (FileStream stream = new FileStream(file.FilePath, FileMode.Open))
                 {
-                    MessageBox.Show(stream.Name);
                     await client.Files.UploadAsync(path + "/" + file.FileName, WriteMode.Overwrite.Instance, body: stream);
 
                     enumerator++;
                     window.RefreshData(enumerator, count);
                 }
             }
+            window.Close();
         }
 
         public async Task<List<AbstractFile>> GetMetadata(List<AbstractFile> List)
         {
             List<AbstractFile> Result = List;
-            foreach (ConcreteFile item in Result.Where(i => i.GetType() == "File"))
+            /*"Оператор foreach используется для итерации коллекции с целью получения необходимой информации, 
+             * однако его не следует использовать для добавления или удаления элементов исходной коллекции
+             * во избежание непредвиденных побочных эффектов. 
+             * Если нужно добавить или удалить элементы исходной коллекции, следует использовать цикл for."*/
+            for (int i = 0; i < Result.Count; i++)
             {
-                //Result.Add(new ConcreteFile());
-                ConcreteFile file = (ConcreteFile)item;
-                Metadata meta = await client.Files.GetMetadataAsync(file.FilePath);
-                file.FileSize = meta.AsFile.Size;
-                file.DateFileClientModified = meta.AsFile.ClientModified;
-                file.DateFileServerModified = meta.AsFile.ServerModified;
-                Result[Result.IndexOf(item)] = file;
+                if (Result[i].Type() == FileDir.File)
+                {
+                    ConcreteFile file = (ConcreteFile)Result[i];
+                    Metadata meta = await client.Files.GetMetadataAsync(file.FilePath);
+                    file.FileSize = meta.AsFile.Size;
+                    file.DateFileClientModified = meta.AsFile.ClientModified;
+                    file.DateFileServerModified = meta.AsFile.ServerModified;
+                    Result[i] = file;
+                }
             }
             return Result;
         }
@@ -175,14 +189,13 @@ namespace StorageHolder
             if (String.IsNullOrEmpty(path))
             {
                 path = string.Empty;
-                //path = "/Изображения";
             }
             List<AbstractFile> FilesList = new List<AbstractFile>();
             ListFolderResult list = await client.Files.ListFolderAsync(path);
             int index = 0;
             if (!String.IsNullOrEmpty(path) && path != "/")
             {
-                FilesList.Add(new ConcreteFolder());
+                FilesList.Add(Creator.GetNew(FileDir.Folder));
                 ConcreteFolder UpFolder = (ConcreteFolder)FilesList[0];
                 UpFolder.FolderName = "..";
                 UpFolder.FolderPath = path.Remove(path.LastIndexOf(@"/"), path.Length - path.LastIndexOf(@"/"));
@@ -191,27 +204,19 @@ namespace StorageHolder
             }
             foreach (var item in list.Entries.Where(i => i.IsFolder))
             {
-                FilesList.Add(new ConcreteFolder());
+                FilesList.Add(Creator.GetNew(FileDir.Folder));
                 ConcreteFolder fle = (ConcreteFolder)FilesList[index];
-                //Metadata meta = await client.Files.GetMetadataAsync(item.PathLower);
                 fle.FolderName = item.Name;
                 fle.FolderPath = item.PathLower;
-                //fle.Id = item.AsFolder.Id;
                 FilesList[index] = fle;
                 index++;
             }
             foreach (var item in list.Entries.Where(i => i.IsFile))
             {
-                FilesList.Add(new ConcreteFile());
+                FilesList.Add(Creator.GetNew(FileDir.File));
                 ConcreteFile fle = (ConcreteFile)FilesList[index];
-                //Metadata meta = await client.Files.GetMetadataAsync(item.PathLower);
                 fle.FileName = item.Name;
                 fle.FilePath = item.PathLower;
-                fle.Type = FileTypes.File;
-                //fle.Id = meta.AsFile.Id;
-                //fle.FileSize = meta.AsFile.Size;
-                //fle.DateFileClientModified = meta.AsFile.ClientModified;
-                //fle.DateFileServerModified = meta.AsFile.ServerModified;
                 FilesList[index] = fle;
                 index++;
             }
@@ -246,11 +251,6 @@ namespace StorageHolder
                     window.RefreshData(enumerator, count);
                 }   
             }
-            //if (window.DialogResult == DialogResult.OK)
-            //{
-            //    window.Close();
-            //}
-            //MessageBox.Show("В директорию " + path + " загружено " + DownloadList.Count.ToString() + " файлов!");
         }
     }
 }

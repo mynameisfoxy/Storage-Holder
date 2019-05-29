@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StorageHolder
+namespace StorageHolder.Files
 {
     abstract class AbstractFile
     {
-        public abstract string GetType();
+        public abstract FileDir Type();
     }
 }

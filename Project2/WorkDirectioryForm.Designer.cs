@@ -134,7 +134,7 @@
             this.NewFolderContext,
             this.InfoContext});
             this.SelectedFilesContextMenu.Name = "contextMenuStrip1";
-            this.SelectedFilesContextMenu.Size = new System.Drawing.Size(189, 202);
+            this.SelectedFilesContextMenu.Size = new System.Drawing.Size(189, 224);
             // 
             // RefreshContext
             // 
@@ -286,7 +286,7 @@
             // 
             // TopPanel
             // 
-            this.TopPanel.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.TopPanel.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.TopPanel.Controls.Add(this.LogOutButton);
             this.TopPanel.Controls.Add(this.UserLabel);
             this.TopPanel.Controls.Add(this.DownloadButton);

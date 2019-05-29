@@ -25,7 +25,7 @@ namespace StorageHolder.Misc
             ID.Text = _ID;
             FileName.Text = _FileName;
             Path.Text = _Path;
-            Size.Text = _Size.ToString() + " bytes"; //fix size output
+            Sz.Text = _Size.ToString() + " bytes"; //fix size output
             ServerModified.Text = _ServerModified.ToString();
             ClientModified.Text = _ClientModified.ToString();
         }
@@ -36,15 +36,15 @@ namespace StorageHolder.Misc
             ID.Text = _ID;
             FileName.Text = _FileName;
             Path.Text = _Path;
-            Size.Visible = false;
+            Sz.Visible = false;
             ServerModifiedLabel.Visible = false;
             ServerModified.Visible = false;
             ClientModified.Visible = false;
             ClientModofiedLabel.Visible = false;
-            SizeLabel.Visible = false;
-            Size.Visible = false;
+            SzLabel.Visible = false;
+            Sz.Visible = false;
             this.Height = 137;
-            Close.Location = new Point(103,106);
+            Cls.Location = new Point(103,106);
         }
 
         private void panel1_MouseDown(object sender, MouseEventArgs e)
