@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace StorageHolder
 {
-    public partial class AddStorageForm : Form
+    public partial class AddStorageForm: Form
     {
         static string RoamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Project2";
         static string DataBasePath = RoamingPath + "\\MyData.db";
@@ -17,19 +17,23 @@ namespace StorageHolder
         int UserId;
         bool IsDropboxEnable = false;
         bool IsGoogleEnable = false;
+
         public AddStorageForm(string DropboxCodeIn, string GoogleCodeIn, int UserIdIn)
         {
             DropboxCode = DropboxCodeIn;
             GoogleCode = GoogleCodeIn;
             UserId = UserIdIn;
+
             if (!String.IsNullOrEmpty(DropboxCode))
             {
                 IsDropboxEnable = true;
             }
+
             if (!String.IsNullOrEmpty(GoogleCode))
             {
                 IsGoogleEnable = true;
             }
+
             InitializeComponent();
             StorageList_SelectedIndexChanged(this, new EventArgs());
         }

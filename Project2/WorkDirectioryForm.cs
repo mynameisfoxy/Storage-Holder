@@ -21,7 +21,7 @@ namespace StorageHolder
         List<string> BreadCrumbs = new List<string>();
         FileCreator Creator = new FileCreator();
         string CurrentPath = null;
-        string FileSystemPath = @"D:\Downloads\";
+        //string FileSystemPath = @"D:\Downloads\";
         string DownloadPath = new KnownFolder(KnownFolderType.Downloads).Path;
         IStorage DropboxClient;
         Point moveStart;
@@ -46,7 +46,6 @@ namespace StorageHolder
             RightComboBox.SelectedIndex = 0;
 
             GoToRoot(this, new EventArgs());
-
         }
 
         void GenerateBreadCrumbs(string path)
@@ -56,11 +55,12 @@ namespace StorageHolder
             BreadCrumbsPanel.Items.Clear();
             BreadCrumbsPanel.Items.Add("/");
             BreadCrumbsPanel.Items[0].Click += GoToRoot;
+
             if (path != null)
             {
                 string[] SplittedParhString = path.Split('/');
-                
                 string BreadPathString = "";
+
                 for (int i = 1; i < SplittedParhString.Length; i++)
                 {
                     BreadPathString += "/"+ SplittedParhString[i];
@@ -82,6 +82,7 @@ namespace StorageHolder
             string[] files = Directory.GetFiles(FsPath);
             string[] directory = Directory.GetDirectories(FsPath);
             int index = 0;
+
             if (!String.IsNullOrEmpty(FsPath) && FsPath.Length > 3)
             {
                 FilesList.Add(new ConcreteFolder());
@@ -91,6 +92,7 @@ namespace StorageHolder
                 FilesList[0] = UpFolder;
                 index = 1;
             }
+
             foreach (string obj in directory)
             {
                 if (Directory.Exists(obj))
@@ -103,6 +105,7 @@ namespace StorageHolder
                     index++;
                 }
             }
+
             foreach (string obj in files)
             {
                 if (File.Exists(obj))
@@ -136,6 +139,7 @@ namespace StorageHolder
             DisplayCounters(FilesAndFolders, StorageListCount);
             GenerateBreadCrumbs(path);
             progressBar1.Value = 70;
+
             if (String.IsNullOrEmpty(CurrentPath))
             {
                 UpButton.Enabled = false;
@@ -144,6 +148,7 @@ namespace StorageHolder
             {
                 UpButton.Enabled = true;
             }
+
             progressBar1.Value = 100;
             FilesAndFolders = await DropboxClient.GetMetadata(FilesAndFolders);
             RefreshContent(FilesAndFolders, StorageFilesList);
@@ -158,10 +163,12 @@ namespace StorageHolder
             {
                 folders++;
             }
+
             foreach (AbstractFile file in list.Where(i => i.Type() == FileDir.File))
             {
                 files++;
             }
+
             if (!String.IsNullOrEmpty(CurrentPath) && CurrentPath != "/")
             {
                 folders--;
@@ -175,6 +182,7 @@ namespace StorageHolder
             FileList.Columns.Add("Name");
             FileList.Columns[0].Width = 300;
             FileList.Columns.Add("Size");
+
             foreach (var item in list.Where(i => i.Type() == FileDir.Folder))
             {
                 ListViewItem lvi = new ListViewItem();
@@ -182,6 +190,7 @@ namespace StorageHolder
                 lvi.Text = fle.FolderName;
                 FileList.Items.Add(lvi);
             }
+
             foreach (var item in list.Where(i => i.Type() == FileDir.File))
             {
                 ListViewItem lvi = new ListViewItem();
@@ -216,11 +225,13 @@ namespace StorageHolder
                 ConcreteFolder fle = (ConcreteFolder)item;
                 FileList.Items[list.IndexOf(item)].ImageIndex = imageList1.Images.Count-1;
             }
+
             if (FileList.Items[0].Name == "..")
             {
                 imageList1.Images.Add(Properties.Resources.icons8_opened_folder_24);
                 FileList.Items[0].ImageIndex = imageList1.Images.Count - 1;
             }
+
             foreach (var item in list.Where(i => i.Type() == FileDir.File))
             {
                 ConcreteFile file = (ConcreteFile)item;
@@ -283,12 +294,14 @@ namespace StorageHolder
                         DownloadList.Add(FilesAndFolders[index]);
                     }
                 }
+
                 if (StorageFilesList.SelectedIndices.Count < 2)
                 {
                     SaveFileDialog SaveFile = new SaveFileDialog();
                     ConcreteFile FileInTheListToDownload = (ConcreteFile)FilesAndFolders[StorageFilesList.SelectedIndices[0]];
                     SaveFile.FileName = FileInTheListToDownload.FileName;
                     DialogResult res = SaveFile.ShowDialog();
+
                     if (res == DialogResult.OK)
                     {
                         await DropboxClient.InitializeDownload(this, SaveFile.FileName, DownloadList);
@@ -299,6 +312,7 @@ namespace StorageHolder
                     FolderBrowserDialog SaveFileFolder = new FolderBrowserDialog();
                     ConcreteFile FileInTheListToDownload = (ConcreteFile)FilesAndFolders[StorageFilesList.SelectedIndices[0]];
                     DialogResult res = SaveFileFolder.ShowDialog();
+
                     if (res == DialogResult.OK)
                     {
                         await DropboxClient.InitializeDownload(this, SaveFileFolder.SelectedPath, DownloadList);
@@ -420,6 +434,7 @@ namespace StorageHolder
             {
                 countFiles = " item";
             }
+
             if (StorageFilesList.SelectedIndices.Count > 0)
             {
                 DeleteList.Clear();
@@ -428,6 +443,7 @@ namespace StorageHolder
                     DeleteList.Add(FilesAndFolders[index]);
                 }
                 count = DeleteList.Count;
+
                 if (MessageBox.Show("Delete " + count + countFiles + "?", "Delete confirm", MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
                     await DropboxClient.InitializeDelete(this, DeleteList);
@@ -456,6 +472,7 @@ namespace StorageHolder
                     ConcreteFile file = (ConcreteFile)FilesAndFolders[StorageFilesList.SelectedIndices[0]];
                     DropboxClient.ShowMetadata(file.FilePath);
                 }
+
                 if (FilesAndFolders[StorageFilesList.SelectedIndices[0]].Type() == FileDir.Folder)
                 {
                     ConcreteFolder folder = (ConcreteFolder)FilesAndFolders[StorageFilesList.SelectedIndices[0]];
@@ -498,6 +515,7 @@ namespace StorageHolder
                     ConcreteFile file = (ConcreteFile)FilesAndFolders[StorageFilesList.SelectedIndices[0]];
                     await DropboxClient.Rename(CurrentPath, file);
                 }
+
                 if (FilesAndFolders[StorageFilesList.SelectedIndices[0]].Type() == FileDir.Folder)
                 {
                     ConcreteFolder folder = (ConcreteFolder)FilesAndFolders[StorageFilesList.SelectedIndices[0]];

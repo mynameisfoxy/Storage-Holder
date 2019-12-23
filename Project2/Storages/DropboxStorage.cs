@@ -47,6 +47,7 @@ namespace StorageHolder
                     ConcreteFile CurrentFile = (ConcreteFile)file;
                     CrtFldrFrm.SetItemName(CurrentFile.FileName);
                     CrtFldrFrm.ShowDialog();
+
                     if (CrtFldrFrm.DialogResult == DialogResult.OK)
                     {
                         await client.Files.MoveAsync(new RelocationArg(CurrentFile.FilePath, path + "/" + CrtFldrFrm.FolderName));
@@ -57,6 +58,7 @@ namespace StorageHolder
                     ConcreteFolder CurrentFile = (ConcreteFolder)file;
                     CrtFldrFrm.SetItemName(CurrentFile.FolderName);
                     CrtFldrFrm.ShowDialog();
+
                     if (CrtFldrFrm.DialogResult == DialogResult.OK)
                     {
                         await client.Files.MoveAsync(new RelocationArg(CurrentFile.FolderPath, path + "/" + CrtFldrFrm.FolderName));
@@ -70,6 +72,7 @@ namespace StorageHolder
             using (NewFolderForm CrtFldrFrm = new NewFolderForm())
             {
                 CrtFldrFrm.ShowDialog();
+
                 if (CrtFldrFrm.DialogResult == DialogResult.OK)
                 {
                     await client.Files.CreateFolderAsync(new CreateFolderArg(NewFolder + "/" + CrtFldrFrm.FolderName, true));
@@ -100,6 +103,7 @@ namespace StorageHolder
             CopyProgress window = new CopyProgress("0", count.ToString());
             window.Owner = OwnerForm;
             window.Show();
+
             foreach (AbstractFile file in DeleteList)
             {
                 if (file.Type() == FileDir.File)
@@ -109,6 +113,7 @@ namespace StorageHolder
                     enumerator++;
                     window.RefreshData(enumerator, count);
                 }
+
                 if (file.Type() == FileDir.Folder)
                 {
                     ConcreteFolder FolderToDelete = (ConcreteFolder)file;
@@ -126,6 +131,7 @@ namespace StorageHolder
             CopyProgress window = new CopyProgress("0", count.ToString());
             window.Owner = OwnerForm;
             window.Show();
+
             foreach (ConcreteFile file in UploadList)
             {
                 using (FileStream stream = new FileStream(file.FilePath, FileMode.Open))
@@ -167,6 +173,7 @@ namespace StorageHolder
             
             string FileName = meta.Name;
             string FilePath = meta.PathLower;
+
             if (meta.IsFile)
             {
                 string ID = meta.AsFile.Id;
@@ -176,6 +183,7 @@ namespace StorageHolder
                 ItemInfoForm info = new ItemInfoForm(ID,FileName,FilePath, FileSize,ServerModified,ClientModified);
                 info.ShowDialog();
             }
+
             if (meta.IsFolder)
             {
                 string ID = meta.AsFolder.Id;
@@ -190,9 +198,11 @@ namespace StorageHolder
             {
                 path = string.Empty;
             }
+
             List<AbstractFile> FilesList = new List<AbstractFile>();
             ListFolderResult list = await client.Files.ListFolderAsync(path);
             int index = 0;
+
             if (!String.IsNullOrEmpty(path) && path != "/")
             {
                 FilesList.Add(Creator.GetNew(FileDir.Folder));
@@ -202,6 +212,7 @@ namespace StorageHolder
                 FilesList[0] = UpFolder;
                 index = 1;
             }
+
             foreach (var item in list.Entries.Where(i => i.IsFolder))
             {
                 FilesList.Add(Creator.GetNew(FileDir.Folder));
@@ -211,6 +222,7 @@ namespace StorageHolder
                 FilesList[index] = fle;
                 index++;
             }
+
             foreach (var item in list.Entries.Where(i => i.IsFile))
             {
                 FilesList.Add(Creator.GetNew(FileDir.File));
@@ -234,14 +246,17 @@ namespace StorageHolder
             
             foreach (ConcreteFile file in DownloadList)
             {
-                if (DownloadList.Count < 2)
+                /*if (DownloadList.Count < 2)
                 {
                     ResultPath = path;
                 }
                 else
                 {
                     ResultPath = path + @"\" + file.FileName;
-                }
+                }*/
+
+                ResultPath = (DownloadList.Count < 2) ? path : path + @"\" + file.FileName;
+
                 using (FileStream fstream = new FileStream(ResultPath, FileMode.CreateNew))
                 {
                     IDownloadResponse<FileMetadata> GetFile = await client.Files.DownloadAsync(file.FilePath);
@@ -249,7 +264,7 @@ namespace StorageHolder
                     await fstream.WriteAsync(FileAsBytes, 0, FileAsBytes.Length);
                     enumerator++;
                     window.RefreshData(enumerator, count);
-                }   
+                }
             }
         }
     }

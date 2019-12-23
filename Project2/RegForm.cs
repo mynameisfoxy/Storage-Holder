@@ -29,12 +29,24 @@ namespace StorageHolder
         private void Registry (object sender, EventArgs e)
         {
             SQLiteConnection db = new SQLiteConnection(DataBasePath);
+
             UserClass RegUserInfo = new UserClass()
             {
                 UserName = HashFunc.GetHash(LoginField.Text),
                 PassWord = HashFunc.GetHash(PasswordField.Text)
             };
+
             db.Insert(RegUserInfo);
+
+            StorageClass RegStorageInfo = new StorageClass()
+            {
+                DropBox = null,
+                Google = null,
+                Id = RegUserInfo.Id,
+            };
+
+            db.Insert(RegStorageInfo);
+
             if (MessageBox.Show("Пользователь " + LoginField.Text + " успешно зарегистрирован!", "Внимание!", 
                 MessageBoxButtons.OK) == DialogResult.OK)
             {
