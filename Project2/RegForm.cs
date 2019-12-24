@@ -12,12 +12,11 @@ namespace StorageHolder
         public RegForm()
         {
             InitializeComponent();
-            
         }
         private void CheckFields(object sender, EventArgs e)
         {
             if (LoginField.Text.Length >= 4 && PasswordField.Text.Length >= 6 && PasswordCheckField.Text.Length >= 6 &&
-                PasswordField.Text==PasswordCheckField.Text)
+                PasswordField.Text == PasswordCheckField.Text)
             {
                 RegButton.Enabled = true;
             }
@@ -26,7 +25,7 @@ namespace StorageHolder
                 RegButton.Enabled = false;
             }
         }
-        private void Registry (object sender, EventArgs e)
+        private void Registry(object sender, EventArgs e)
         {
             SQLiteConnection db = new SQLiteConnection(DataBasePath);
 
@@ -47,13 +46,13 @@ namespace StorageHolder
 
             db.Insert(RegStorageInfo);
 
-            if (MessageBox.Show("Пользователь " + LoginField.Text + " успешно зарегистрирован!", "Внимание!", 
+            if (MessageBox.Show("Пользователь " + LoginField.Text + " успешно зарегистрирован!", "Внимание!",
                 MessageBoxButtons.OK) == DialogResult.OK)
             {
                 this.Close();
             }
         }
-        private void CloseClick (object sender, EventArgs e)
+        private void CloseClick(object sender, EventArgs e)
         {
             this.Close();
         }

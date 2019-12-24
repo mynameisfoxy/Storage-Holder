@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using StorageHolder.Authentication;
 
 namespace StorageHolder
 {
@@ -35,6 +36,7 @@ namespace StorageHolder
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            Auth.GetInstance();
             Application.Run(new LogInForm());
             //Application.Run(new WorkDirectioryForm());
         }

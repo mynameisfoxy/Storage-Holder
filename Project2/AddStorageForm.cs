@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace StorageHolder
 {
-    public partial class AddStorageForm: Form
+    public partial class AddStorageForm : Form
     {
         static string RoamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Project2";
         static string DataBasePath = RoamingPath + "\\MyData.db";
@@ -55,7 +55,7 @@ namespace StorageHolder
                         SQLiteConnection db = new SQLiteConnection(DataBasePath);
                         List<StorageClass> DataStorageImport = new List<StorageClass>();
                         DataStorageImport = db.Query<StorageClass>("SELECT * FROM StorageKeys WHERE UserId='" + UserId + "'");
-                        if (DataStorageImport.Count>0)
+                        if (DataStorageImport.Count > 0)
                         {
                             DataStorageImport = db.Query<StorageClass>("UPDATE StorageKeys SET DropboxKey='" + DropboxCode + "'" + "WHERE UserId='" + UserId + "'");
                         }

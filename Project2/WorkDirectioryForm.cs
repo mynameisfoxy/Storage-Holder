@@ -42,7 +42,7 @@ namespace StorageHolder
 
             string[] files = Directory.GetFiles(Directory.GetCurrentDirectory());
 
-            DropboxClient = new DropboxStorage("");
+            DropboxClient = new DropboxStorage("JPL_TOTIRMAAAAAAAAAAOnUN4uHAGJnQ5mWjsU-tEq6etMDR1DGTwSdJ6bRwQj7e");
             RightComboBox.SelectedIndex = 0;
 
             GoToRoot(this, new EventArgs());
@@ -220,6 +220,7 @@ namespace StorageHolder
         {
             imageList1.Images.Clear();
             imageList1.Images.Add(Properties.Resources.icons8_folder_24);
+
             foreach (var item in list.Where(i => i.Type() == FileDir.Folder))
             {
                 ConcreteFolder fle = (ConcreteFolder)item;
