@@ -17,6 +17,8 @@ namespace StorageHolder.Authentication
         static string RoamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Project2";
         static string DataBasePath = RoamingPath + "\\MyData.db";
         Subject<string> UserName = new Subject<string>();
+        Subject<bool> LoginState = new Subject<bool>();
+        Subject<string> DropBoxToken = new Subject<string>();
 
         private Auth()
         {
@@ -55,8 +57,9 @@ namespace StorageHolder.Authentication
             db.Insert(RegStorageInfo);
         }
 
-        public void LogIn(string Login, string Password)
+        public bool LogIn(string Login, string Password)
         {
+            bool Result = false;
             SQLiteConnection db = new SQLiteConnection(DataBasePath);
             List<UserClass> DataUserImport = new List<UserClass>();
             List<StorageClass> DataStorageImport = new List<StorageClass>();
@@ -68,18 +71,26 @@ namespace StorageHolder.Authentication
             {
                 if (DataUserImport[0].PassWord != HashFunc.GetHash(Password))
                 {
-                    MessageBox.Show("Пароль инкоррект!");
+                    MessageBox.Show("Password incorrect!");
+                    LoginState.OnNext(false);
+                    Result = false;
                 }
                 else
                 {
-                    AddStorageForm frm = new AddStorageForm(DataStorageImport[0].DropBox, DataStorageImport[0].Google, DataUserImport[0].Id);
-                    frm.ShowDialog();
+                    UserName.OnNext(DataUserImport[0].UserName);
+                    LoginState.OnNext(true);
+                    DropBoxToken.OnNext(DataStorageImport[0].DropBox);
+                    Result = true;
                 }
             }
             else
             {
-                MessageBox.Show(Login + " не найден!");
+                MessageBox.Show(Login + " not found!");
+                LoginState.OnNext(false);
+                Result = false;
             }
+
+            return Result;
         }
 
         private void CheckBaseExistance()
@@ -98,6 +109,16 @@ namespace StorageHolder.Authentication
         public IObservable<string> GetUserName()
         {
             return UserName;
+        }
+
+        public IObservable<bool> GetLoginState()
+        {
+            return LoginState;
+        }
+
+        public IObservable<string> GetDropBoxToken()
+        {
+            return DropBoxToken;
         }
     }
 }

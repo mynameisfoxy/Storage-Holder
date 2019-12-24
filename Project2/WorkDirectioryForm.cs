@@ -9,20 +9,26 @@ using Syroot.Windows.IO;
 using System.Drawing;
 using Etier.IconHelper;
 using StorageHolder.Files;
+using StorageHolder.Authentication;
 
 namespace StorageHolder
 {
     public partial class WorkDirectioryForm : Form
     {
+        Auth AuthApi = Auth.GetInstance();
+        bool LoginState = false;
+
         List<AbstractFile> FilesAndFolders = new List<AbstractFile>();
         List<AbstractFile> DownloadList = new List<AbstractFile>();
         List<AbstractFile> DeleteList = new List<AbstractFile>();
         List<AbstractFile> UploadList = new List<AbstractFile>();
+
         List<string> BreadCrumbs = new List<string>();
-        FileCreator Creator = new FileCreator();
+        readonly FileCreator Creator = new FileCreator();
+
         string CurrentPath = null;
-        //string FileSystemPath = @"D:\Downloads\";
-        string DownloadPath = new KnownFolder(KnownFolderType.Downloads).Path;
+        readonly string DownloadPath = new KnownFolder(KnownFolderType.Downloads).Path;
+
         IStorage DropboxClient;
         Point moveStart;
 
@@ -35,17 +41,31 @@ namespace StorageHolder
             UpButton.Parent = StorageFolderPage;
             StorageFilesList.Parent = StorageFolderPage;
             BreadCrumbsPanel.Parent = StorageFolderPage;
-            
-            StorageFolderPage.BringToFront();
+
+            AuthApi.GetUserName().Subscribe((string Name) =>
+            {
+                UserLabel.Text = Name;
+            });
+
+            AuthApi.GetLoginState().Subscribe((bool State) =>
+            {
+                LoginState = State;
+            });
+
+            AuthApi.GetDropBoxToken().Subscribe((string Token) =>
+            {
+                DropboxClient = new DropboxStorage(Token);
+                RightComboBox.SelectedIndex = 0;
+
+                GoToRoot(this, new EventArgs());
+            });
+
+            //ShowStoragePanel(true);
+            ShowLoginPanel(true);
             //====================================
             BreadCrumbs.Add("/");
 
             string[] files = Directory.GetFiles(Directory.GetCurrentDirectory());
-
-            DropboxClient = new DropboxStorage("JPL_TOTIRMAAAAAAAAAAOnUN4uHAGJnQ5mWjsU-tEq6etMDR1DGTwSdJ6bRwQj7e");
-            RightComboBox.SelectedIndex = 0;
-
-            GoToRoot(this, new EventArgs());
         }
 
         void GenerateBreadCrumbs(string path)
@@ -63,10 +83,12 @@ namespace StorageHolder
 
                 for (int i = 1; i < SplittedParhString.Length; i++)
                 {
-                    BreadPathString += "/"+ SplittedParhString[i];
+                    BreadPathString += "/" + SplittedParhString[i];
                     BreadCrumbs.Add(BreadPathString);
                     BreadCrumbsPanel.Items.Add(SplittedParhString[i]);
-                    BreadCrumbsPanel.Items[i].Click += async (object sender, EventArgs e) => {
+
+                    BreadCrumbsPanel.Items[i].Click += async (object sender, EventArgs e) =>
+                    {
                         ToolStripItem BreadClicked = sender as ToolStripItem;
                         CurrentPath = BreadCrumbs[BreadCrumbsPanel.Items.IndexOf(BreadClicked)];
                         await ChainToShow(BreadCrumbs[BreadCrumbsPanel.Items.IndexOf(BreadClicked)]);
@@ -122,38 +144,41 @@ namespace StorageHolder
             index = 0;
             return FilesList;
         }
-        
+
         async Task ChainToShow(string path)
         {
-            InfoContext.Visible = false;
-            DeleteContext.Visible = false;
-            DeleteButton.Enabled = false;
-            RenameContext.Visible = false;
-            GetSharedLinkClipboardContext.Visible = false;
-            //==============================
-            progressBar1.Value = 30;
-            FilesAndFolders = await DropboxClient.GetList(path);
-            progressBar1.Value = 50;
-            DisplayContent(FilesAndFolders, StorageFilesList);
-            SetIcons(FilesAndFolders, StorageFilesList);
-            DisplayCounters(FilesAndFolders, StorageListCount);
-            GenerateBreadCrumbs(path);
-            progressBar1.Value = 70;
-
-            if (String.IsNullOrEmpty(CurrentPath))
+            if (DropboxClient != null)
             {
-                UpButton.Enabled = false;
-            }
-            else
-            {
-                UpButton.Enabled = true;
-            }
+                InfoContext.Visible = false;
+                DeleteContext.Visible = false;
+                DeleteButton.Enabled = false;
+                RenameContext.Visible = false;
+                GetSharedLinkClipboardContext.Visible = false;
+                //==============================
+                progressBar1.Value = 30;
+                FilesAndFolders = await DropboxClient.GetList(path);
+                progressBar1.Value = 50;
+                DisplayContent(FilesAndFolders, StorageFilesList);
+                SetIcons(FilesAndFolders, StorageFilesList);
+                DisplayCounters(FilesAndFolders, StorageListCount);
+                GenerateBreadCrumbs(path);
+                progressBar1.Value = 70;
 
-            progressBar1.Value = 100;
-            FilesAndFolders = await DropboxClient.GetMetadata(FilesAndFolders);
-            RefreshContent(FilesAndFolders, StorageFilesList);
-            await Task.Run(async () => { await Task.Delay(200); });
-            progressBar1.Value = 0;
+                if (String.IsNullOrEmpty(CurrentPath))
+                {
+                    UpButton.Enabled = false;
+                }
+                else
+                {
+                    UpButton.Enabled = true;
+                }
+
+                progressBar1.Value = 100;
+                FilesAndFolders = await DropboxClient.GetMetadata(FilesAndFolders);
+                RefreshContent(FilesAndFolders, StorageFilesList);
+                await Task.Run(async () => { await Task.Delay(200); });
+                progressBar1.Value = 0;
+            }
         }
 
         void DisplayCounters(List<AbstractFile> list, Label label)
@@ -203,7 +228,8 @@ namespace StorageHolder
 
         void RefreshContent(List<AbstractFile> list, ListView FileList)
         {
-            try {
+            try
+            {
                 for (int i = 0; i < list.Count; i++)
                 {
                     if (list[i].Type() == FileDir.File)
@@ -224,7 +250,7 @@ namespace StorageHolder
             foreach (var item in list.Where(i => i.Type() == FileDir.Folder))
             {
                 ConcreteFolder fle = (ConcreteFolder)item;
-                FileList.Items[list.IndexOf(item)].ImageIndex = imageList1.Images.Count-1;
+                FileList.Items[list.IndexOf(item)].ImageIndex = imageList1.Images.Count - 1;
             }
 
             if (FileList.Items[0].Name == "..")
@@ -236,7 +262,7 @@ namespace StorageHolder
             foreach (var item in list.Where(i => i.Type() == FileDir.File))
             {
                 ConcreteFile file = (ConcreteFile)item;
-                imageList1.Images.Add(Etier.IconHelper.IconReader.GetFileIcon(Path.GetExtension(file.FilePath), 
+                imageList1.Images.Add(Etier.IconHelper.IconReader.GetFileIcon(Path.GetExtension(file.FilePath),
                     IconReader.IconSize.Large, false));
                 FileList.Items[list.IndexOf(item)].ImageIndex = imageList1.Images.Count - 1;
             }
@@ -405,9 +431,9 @@ namespace StorageHolder
             }
         }
 
-        private async void StorageFilesList_DragDrop(object sender, DragEventArgs e)
+        private async void StorageFilesList_DragDrop(object sender, DragEventArgs ev)
         {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            string[] files = (string[])ev.Data.GetData(DataFormats.FileDrop);
             UploadList.Clear();
 
             foreach (string file in files)
@@ -425,27 +451,18 @@ namespace StorageHolder
 
         private async void DeleteClicked(object sender, EventArgs e)
         {
-            string countFiles;
-            int count = 0;
-            if (DeleteList.Count > 1)
-            {
-                countFiles = " items";
-            }
-            else
-            {
-                countFiles = " item";
-            }
+            string countFiles = DeleteList.Count > 1 ? " items" : " item";
 
             if (StorageFilesList.SelectedIndices.Count > 0)
             {
                 DeleteList.Clear();
+
                 foreach (int index in StorageFilesList.SelectedIndices)
                 {
                     DeleteList.Add(FilesAndFolders[index]);
                 }
-                count = DeleteList.Count;
 
-                if (MessageBox.Show("Delete " + count + countFiles + "?", "Delete confirm", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                if (MessageBox.Show("Delete " + DeleteList.Count + countFiles + "?", "Delete confirm", MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
                     await DropboxClient.InitializeDelete(this, DeleteList);
                     await ChainToShow(CurrentPath);
@@ -489,7 +506,9 @@ namespace StorageHolder
                 if (FilesAndFolders[StorageFilesList.SelectedIndices[0]].Type() == FileDir.File)
                 {
                     ConcreteFile file = (ConcreteFile)FilesAndFolders[StorageFilesList.SelectedIndices[0]];
+
                     string str = await DropboxClient.GetSharedLink(file.FilePath);
+                    
                     Clipboard.SetText(str);
                 }
             }
@@ -497,14 +516,46 @@ namespace StorageHolder
 
         private void StoragePageButton_Click(object sender, EventArgs e)
         {
-            LeftPanel.Visible = true;
-            StorageFolderPage.BringToFront();
+            ShowStoragePanel(true);
         }
 
         private void LogOutButton_Click(object sender, EventArgs e)
         {
-            LeftPanel.Visible = false;
-            LoginPanel.BringToFront();
+            ShowLoginPanel(true);
+        }
+
+        private void ShowLoginPanel(bool state)
+        {
+            if (state)
+            {
+                LeftPanel.Visible = false;
+                LogOutButton.Enabled = false;
+                LoginPanel.BringToFront();
+            }
+            else
+            {
+                LeftPanel.Visible = true;
+                LogOutButton.Enabled = true;
+                LoginPanel.SendToBack();
+            }
+        }
+
+        private void ShowStoragePanel(bool state)
+        {
+            if (state)
+            {
+                LeftPanel.Visible = true;
+                StoragePageButton.Enabled = true;
+                SettingsButton.Enabled = true;
+                StorageFolderPage.BringToFront();
+            }
+            else
+            {
+                LeftPanel.Visible = false;
+                StoragePageButton.Enabled = false;
+                SettingsButton.Enabled = false;
+                StorageFolderPage.SendToBack();
+            }
         }
 
         private async void RenameContext_Click(object sender, EventArgs e)
@@ -523,6 +574,27 @@ namespace StorageHolder
                     await DropboxClient.Rename(CurrentPath, folder);
                 }
                 await ChainToShow(CurrentPath);
+            }
+        }
+
+        private void CheckFields(object sender, EventArgs e)
+        {
+            LoginButton.Enabled = ((LoginField.Text.Length >= 4) && (PasswordField.Text.Length >= 6));
+        }
+
+        private void RegistrationButton_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("todo: registration window/panel");
+        }
+
+        private void LoginButton_Click(object sender, EventArgs e)
+        {
+            if (AuthApi.LogIn(LoginField.Text, PasswordField.Text))
+            {
+                LoginField.Text = "";
+                PasswordField.Text = "";
+                ShowLoginPanel(false);
+                ShowStoragePanel(true);
             }
         }
     }

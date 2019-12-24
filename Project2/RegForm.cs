@@ -9,14 +9,18 @@ namespace StorageHolder
     {
         static string RoamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Project2";
         static string DataBasePath = RoamingPath + "\\MyData.db";
+
         public RegForm()
         {
             InitializeComponent();
         }
+
         private void CheckFields(object sender, EventArgs e)
         {
-            if (LoginField.Text.Length >= 4 && PasswordField.Text.Length >= 6 && PasswordCheckField.Text.Length >= 6 &&
-                PasswordField.Text == PasswordCheckField.Text)
+            if ((LoginField.Text.Length >= 4)
+                && (PasswordField.Text.Length >= 6)
+                && (PasswordCheckField.Text.Length >= 6)
+                && (PasswordField.Text == PasswordCheckField.Text))
             {
                 RegButton.Enabled = true;
             }
@@ -25,6 +29,7 @@ namespace StorageHolder
                 RegButton.Enabled = false;
             }
         }
+
         private void Registry(object sender, EventArgs e)
         {
             SQLiteConnection db = new SQLiteConnection(DataBasePath);
@@ -52,6 +57,7 @@ namespace StorageHolder
                 this.Close();
             }
         }
+
         private void CloseClick(object sender, EventArgs e)
         {
             this.Close();

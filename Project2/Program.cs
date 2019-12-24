@@ -37,8 +37,8 @@ namespace StorageHolder
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Auth.GetInstance();
-            Application.Run(new LogInForm());
-            //Application.Run(new WorkDirectioryForm());
+            //Application.Run(new LogInForm());
+            Application.Run(new WorkDirectioryForm());
         }
     }
 }

@@ -61,7 +61,7 @@
             this.RefreshButton = new System.Windows.Forms.Button();
             this.DeleteButton = new System.Windows.Forms.Button();
             this.UpButton = new System.Windows.Forms.Button();
-            this.lollipopFlatButton1 = new LollipopFlatButton();
+            this.loliButton = new LollipopFlatButton();
             this.lollipopToggle1 = new LollipopToggle();
             this.lollipopFolderInPut1 = new LollipopFolderInPut();
             this.lollipopButton1 = new LollipopButton();
@@ -76,13 +76,13 @@
             this.StorageTreeView = new System.Windows.Forms.TreeView();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.LoginPanel = new System.Windows.Forms.Panel();
-            this.lollipopButton2 = new LollipopButton();
+            this.LoginButton = new LollipopButton();
             this.PasswordLabel = new LollipopLabel();
             this.LoginLabel = new LollipopLabel();
             this.PasswordField = new LollipopTextBox();
             this.LoginField = new LollipopTextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.lollipopFlatButton2 = new LollipopFlatButton();
+            this.RegistrationButton = new LollipopFlatButton();
             this.SelectedFilesContextMenu.SuspendLayout();
             this.BreadCrumbsPanel.SuspendLayout();
             this.TopPanel.SuspendLayout();
@@ -134,7 +134,7 @@
             this.NewFolderContext,
             this.InfoContext});
             this.SelectedFilesContextMenu.Name = "contextMenuStrip1";
-            this.SelectedFilesContextMenu.Size = new System.Drawing.Size(189, 224);
+            this.SelectedFilesContextMenu.Size = new System.Drawing.Size(189, 202);
             // 
             // RefreshContext
             // 
@@ -308,6 +308,7 @@
             this.LogOutButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.LogOutButton.BackColor = System.Drawing.Color.MintCream;
             this.LogOutButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.LogOutButton.Enabled = false;
             this.LogOutButton.FlatAppearance.BorderSize = 0;
             this.LogOutButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.LogOutButton.Image = global::StorageHolder.Properties.Resources.icons8_log_in_24;
@@ -366,6 +367,7 @@
             this.StoragePageButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.StoragePageButton.BackColor = System.Drawing.SystemColors.Window;
             this.StoragePageButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.StoragePageButton.Enabled = false;
             this.StoragePageButton.FlatAppearance.BorderSize = 0;
             this.StoragePageButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.StoragePageButton.Image = global::StorageHolder.Properties.Resources.icons8_shared_folder_24;
@@ -383,6 +385,7 @@
             this.SettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.SettingsButton.BackColor = System.Drawing.SystemColors.Menu;
             this.SettingsButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.SettingsButton.Enabled = false;
             this.SettingsButton.FlatAppearance.BorderSize = 0;
             this.SettingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SettingsButton.Image = global::StorageHolder.Properties.Resources.icons8_settings_24;
@@ -417,7 +420,7 @@
             // 
             this.SettingsPage.BackColor = System.Drawing.SystemColors.Menu;
             this.SettingsPage.Controls.Add(this.StorageFolderPage);
-            this.SettingsPage.Controls.Add(this.lollipopFlatButton1);
+            this.SettingsPage.Controls.Add(this.loliButton);
             this.SettingsPage.Controls.Add(this.lollipopToggle1);
             this.SettingsPage.Controls.Add(this.lollipopFolderInPut1);
             this.SettingsPage.Controls.Add(this.lollipopButton1);
@@ -514,15 +517,15 @@
             this.UpButton.UseVisualStyleBackColor = true;
             this.UpButton.Click += new System.EventHandler(this.UpButtonClick);
             // 
-            // lollipopFlatButton1
+            // loliButton
             // 
-            this.lollipopFlatButton1.BackColor = System.Drawing.Color.Transparent;
-            this.lollipopFlatButton1.FontColor = "#508ef5";
-            this.lollipopFlatButton1.Location = new System.Drawing.Point(164, 308);
-            this.lollipopFlatButton1.Name = "lollipopFlatButton1";
-            this.lollipopFlatButton1.Size = new System.Drawing.Size(102, 29);
-            this.lollipopFlatButton1.TabIndex = 12;
-            this.lollipopFlatButton1.Text = "lollipopFlatButton1";
+            this.loliButton.BackColor = System.Drawing.Color.Transparent;
+            this.loliButton.FontColor = "#508ef5";
+            this.loliButton.Location = new System.Drawing.Point(164, 308);
+            this.loliButton.Name = "loliButton";
+            this.loliButton.Size = new System.Drawing.Size(102, 29);
+            this.loliButton.TabIndex = 12;
+            this.loliButton.Text = "lollipopFlatButton1";
             // 
             // lollipopToggle1
             // 
@@ -660,31 +663,33 @@
             // 
             this.LoginPanel.BackColor = System.Drawing.SystemColors.Window;
             this.LoginPanel.Controls.Add(this.SettingsPage);
-            this.LoginPanel.Controls.Add(this.lollipopButton2);
+            this.LoginPanel.Controls.Add(this.LoginButton);
             this.LoginPanel.Controls.Add(this.PasswordLabel);
             this.LoginPanel.Controls.Add(this.LoginLabel);
             this.LoginPanel.Controls.Add(this.PasswordField);
             this.LoginPanel.Controls.Add(this.LoginField);
             this.LoginPanel.Controls.Add(this.label1);
-            this.LoginPanel.Controls.Add(this.lollipopFlatButton2);
+            this.LoginPanel.Controls.Add(this.RegistrationButton);
             this.LoginPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.LoginPanel.Location = new System.Drawing.Point(177, 29);
             this.LoginPanel.Name = "LoginPanel";
             this.LoginPanel.Size = new System.Drawing.Size(844, 712);
             this.LoginPanel.TabIndex = 100;
             // 
-            // lollipopButton2
+            // LoginButton
             // 
-            this.lollipopButton2.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.lollipopButton2.BackColor = System.Drawing.Color.Transparent;
-            this.lollipopButton2.BGColor = "#508ef5";
-            this.lollipopButton2.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lollipopButton2.FontColor = "#ffffff";
-            this.lollipopButton2.Location = new System.Drawing.Point(334, 385);
-            this.lollipopButton2.Name = "lollipopButton2";
-            this.lollipopButton2.Size = new System.Drawing.Size(143, 41);
-            this.lollipopButton2.TabIndex = 5;
-            this.lollipopButton2.Text = "Log In";
+            this.LoginButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.LoginButton.BackColor = System.Drawing.Color.Transparent;
+            this.LoginButton.BGColor = "#508ef5";
+            this.LoginButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.LoginButton.Enabled = false;
+            this.LoginButton.FontColor = "#ffffff";
+            this.LoginButton.Location = new System.Drawing.Point(334, 385);
+            this.LoginButton.Name = "LoginButton";
+            this.LoginButton.Size = new System.Drawing.Size(143, 41);
+            this.LoginButton.TabIndex = 5;
+            this.LoginButton.Text = "Log In";
+            this.LoginButton.Click += new System.EventHandler(this.LoginButton_Click);
             // 
             // PasswordLabel
             // 
@@ -727,6 +732,7 @@
             this.PasswordField.TabIndex = 2;
             this.PasswordField.TextAlignment = System.Windows.Forms.HorizontalAlignment.Left;
             this.PasswordField.UseSystemPasswordChar = true;
+            this.PasswordField.TextChanged += new System.EventHandler(this.CheckFields);
             // 
             // LoginField
             // 
@@ -744,6 +750,7 @@
             this.LoginField.TabIndex = 1;
             this.LoginField.TextAlignment = System.Windows.Forms.HorizontalAlignment.Left;
             this.LoginField.UseSystemPasswordChar = false;
+            this.LoginField.TextChanged += new System.EventHandler(this.CheckFields);
             // 
             // label1
             // 
@@ -756,17 +763,18 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Storage Holder";
             // 
-            // lollipopFlatButton2
+            // RegistrationButton
             // 
-            this.lollipopFlatButton2.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.lollipopFlatButton2.BackColor = System.Drawing.Color.Transparent;
-            this.lollipopFlatButton2.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lollipopFlatButton2.FontColor = "#508ef5";
-            this.lollipopFlatButton2.Location = new System.Drawing.Point(177, 385);
-            this.lollipopFlatButton2.Name = "lollipopFlatButton2";
-            this.lollipopFlatButton2.Size = new System.Drawing.Size(143, 41);
-            this.lollipopFlatButton2.TabIndex = 6;
-            this.lollipopFlatButton2.Text = "Registration";
+            this.RegistrationButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.RegistrationButton.BackColor = System.Drawing.Color.Transparent;
+            this.RegistrationButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.RegistrationButton.FontColor = "#508ef5";
+            this.RegistrationButton.Location = new System.Drawing.Point(177, 385);
+            this.RegistrationButton.Name = "RegistrationButton";
+            this.RegistrationButton.Size = new System.Drawing.Size(143, 41);
+            this.RegistrationButton.TabIndex = 6;
+            this.RegistrationButton.Text = "Registration";
+            this.RegistrationButton.Click += new System.EventHandler(this.RegistrationButton_Click);
             // 
             // WorkDirectioryForm
             // 
@@ -844,19 +852,19 @@
         private System.Windows.Forms.ToolStripMenuItem DownloadZipContext;
         private System.Windows.Forms.ToolStripMenuItem GetSharedLinkClipboardContext;
         private System.Windows.Forms.ToolStripMenuItem RenameContext;
-        private LollipopFlatButton lollipopFlatButton1;
+        private LollipopFlatButton loliButton;
         private LollipopToggle lollipopToggle1;
         private LollipopFolderInPut lollipopFolderInPut1;
         private LollipopButton lollipopButton1;
         private LollipopLabel lollipopLabel1;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Panel LoginPanel;
-        private LollipopButton lollipopButton2;
+        private LollipopButton LoginButton;
         private LollipopLabel PasswordLabel;
         private LollipopLabel LoginLabel;
         private LollipopTextBox PasswordField;
         private LollipopTextBox LoginField;
         private System.Windows.Forms.Label label1;
-        private LollipopFlatButton lollipopFlatButton2;
+        private LollipopFlatButton RegistrationButton;
     }
 }
